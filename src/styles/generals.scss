@@ -1,0 +1,35 @@
+@use './_partials/variables' as *;
+@import './_partials/mixins';
+
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:ital,wght@0,100..900;1,100..900');
+@import "../../node_modules/bootstrap/scss/bootstrap";
+
+@import '@fortawesome/fontawesome-free/css/all.css';
+
+body{
+    font-family: "Montserrat", sans-serif;
+}
+
+h1,h2,h3,h4,h5,h6{
+    font-family: "Great Vibes", sans-serif;
+}
+
+.btn-main{
+    background-color: $mainColor;
+    padding: 10px 30px;
+    border: 1px solid $mainColor;
+    color: #fff;
+    transition: 0.3s;
+
+    &:hover{
+        background-color: $hoverMain
+    }
+}
+
+.bg-main{
+    background-color: $mainColor
+}
+
+.logo {
+  width: 150px;
+}
