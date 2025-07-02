@@ -1,0 +1,11 @@
+@use './variables' as *;
+
+@mixin sidebarItems{
+    
+    background-color: #fff;
+
+    a {
+      color: $mainColor;
+    }
+    
+}

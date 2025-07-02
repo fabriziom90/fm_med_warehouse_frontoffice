@@ -3,10 +3,19 @@ import { ref } from "vue";
 import axios from "axios";
 import { router } from "../../router/index.js";
 
+// import toast
 import { useToast } from "vue-toast-notification";
 
+// import Loader
 import Loader from "../../components/Loader.vue";
 
+// import store
+import { useConfigStore } from "../../stores/configStore.js";
+
+// save store in variable
+const configStore = useConfigStore();
+
+// save useToast function in variable
 const $toast = useToast();
 
 const form = ref({
@@ -20,7 +29,7 @@ const handleSubmit = async () => {
   isLoading.value = true;
   try {
     await axios
-      .post("http://127.0.0.1:3000/api/users/login", form.value)
+      .post(`${configStore.apiBaseUrl}/users/login`, form.value)
       .then((resp) => {
         const token = resp.data.token;
         localStorage.setItem("token", token);

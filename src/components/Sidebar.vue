@@ -1,14 +1,22 @@
 <script setup></script>
 <template lang="">
   <div id="sidebar">
-    <div class="top-sidebar">
-      <img src="/logo.png" alt="" />
-      <h2 class="fs-5 mt-3">MediStock</h2>
-    </div>
+    <router-link to="/admin">
+      <div class="top-sidebar">
+        <img src="/logo.png" alt="" />
+        <h2 class="fs-5 mt-3 text-white text-decoration-none">MediStock</h2>
+      </div>
+    </router-link>
     <div class="middle-sidebar">
       <ul class="list-unstyled">
-        <li>
-          <router-link
+        <li
+          :class="
+            this.$route.matched.some((route) => route.path.includes('/rooms'))
+              ? 'active'
+              : ''
+          "
+        >
+          <router-link to="/admin/rooms"
             ><i class="fas fa-door-closed me-2"></i>Stanze</router-link
           >
         </li>
@@ -27,12 +35,15 @@
 </template>
 <style lang="scss" scoped>
 @use "../styles/generals.scss";
+@use "../styles/_partials//_mixins.scss" as *;
 @use "../styles/_partials/_variables.scss" as *;
+
 #sidebar {
   width: 200px;
   height: 100vh;
   background-color: $mainColor;
   color: #fff;
+  border-right: 1px solid $mainColor;
 }
 
 .top-sidebar {
@@ -51,11 +62,7 @@
     padding: 20px 0px 20px 20px;
     transition: 0.3s;
     &:hover {
-      background-color: #fff;
-
-      a {
-        color: $mainColor;
-      }
+      @include sidebarItems;
     }
 
     a {
@@ -64,6 +71,10 @@
       font-size: 25px;
       text-decoration: none;
     }
+  }
+
+  li.active {
+    @include sidebarItems;
   }
 }
 

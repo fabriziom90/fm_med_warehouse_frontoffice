@@ -4,7 +4,9 @@ import Sidebar from "../components/Sidebar.vue";
 <template lang="">
   <div class="d-flex">
     <Sidebar />
-    <main></main>
+    <main>
+      <router-view></router-view>
+    </main>
   </div>
 </template>
 <style lang="scss" scoped>
