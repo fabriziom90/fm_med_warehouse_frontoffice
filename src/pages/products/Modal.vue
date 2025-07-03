@@ -10,7 +10,7 @@ defineProps({
         <div class="modal-container">
           <div class="modal-header">Conferma cancellazione</div>
           <div class="modal-body">
-            Sei sicura di voler cancellare questa stanza?
+            Sei sicura di voler cancellare questo prodotto?
           </div>
           <div class="modal-footer">
             <button

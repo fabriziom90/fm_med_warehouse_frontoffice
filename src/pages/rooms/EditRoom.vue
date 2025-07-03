@@ -1,5 +1,5 @@
 <script setup>
-import axios from "axios";
+import api from "../../services/api";
 import { ref, onMounted } from "vue";
 import { useConfigStore } from "../../stores/configStore";
 import { useToast } from "vue-toast-notification";
@@ -20,7 +20,7 @@ const form = ref({
 });
 
 onMounted(() => {
-  axios
+  api
     .get(`${configStore.apiBaseUrl}/clinic_rooms/${roomId}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -31,7 +31,7 @@ onMounted(() => {
 
 const handleSubmit = async () => {
   try {
-    await axios
+    await api
       .patch(
         `${configStore.apiBaseUrl}/clinic_rooms/${roomId}/update`,
         form.value,

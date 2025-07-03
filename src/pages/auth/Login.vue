@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import axios from "axios";
+import api from "../../services/api";
 import { router } from "../../router/index.js";
 
 // import toast
@@ -28,7 +28,7 @@ const isLoading = ref(false);
 const handleSubmit = async () => {
   isLoading.value = true;
   try {
-    await axios
+    await api
       .post(`${configStore.apiBaseUrl}/users/login`, form.value)
       .then((resp) => {
         const token = resp.data.token;

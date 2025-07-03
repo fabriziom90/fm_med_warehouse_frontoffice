@@ -9,6 +9,9 @@ import Rooms from '../pages/rooms/Rooms.vue';
 import CreateRoom from '../pages/rooms/CreateRoom.vue';
 import EditRoom from '../pages/rooms/EditRoom.vue';
 
+// products components
+import Products from '../pages/products/Products.vue';
+
 const router = createRouter({
     history: createWebHistory(),
     routes: [
@@ -45,6 +48,16 @@ const router = createRouter({
                             component: EditRoom
                         }
 
+                    ]
+                },
+                {
+                    path: 'products',
+                    children: [
+                        {
+                            path: '',
+                            name: 'indexProduct',
+                            component: Products
+                        }
                     ]
                 }
             ]

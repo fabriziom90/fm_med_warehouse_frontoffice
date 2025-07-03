@@ -67,7 +67,7 @@ onMounted(() => {
 const getRooms = () => {
   try {
     api
-      .get(`${configStore.apiBaseUrl}/clinic_rooms`, {
+      .get(`${configStore.apiBaseUrl}/products`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -76,14 +76,14 @@ const getRooms = () => {
         rooms.value = resp.data.clinicRooms;
       });
   } catch (err) {
-    console.log(err);
+    err.response.data.message;
   }
 };
 
 const confirmDelete = async () => {
   await api
     .delete(
-      `${configStore.apiBaseUrl}/clinic_rooms/delete/${selectedRoom.value._id}`,
+      `${configStore.apiBaseUrl}/products/delete/${selectedRoom.value._id}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -118,9 +118,9 @@ function closeModal() {
       <div class="row">
         <div class="col-12">
           <div class="d-flex justify-content-between align-items-center">
-            <h2 class="fs-1">Elenco stanze</h2>
+            <h2 class="fs-1">Elenco prodotti</h2>
             <router-link class="btn-main" to="/admin/rooms/create"
-              >Aggiungi stanza</router-link
+              >Aggiungi prodotto</router-link
             >
           </div>
         </div>
@@ -130,8 +130,8 @@ function closeModal() {
           <DataTable
             class="display table table-striped mt-3"
             :options="defaultOptions"
-            :data="rooms"
-            v-if="rooms.length"
+            :data="products"
+            v-if="products.length"
           >
           </DataTable>
         </div>

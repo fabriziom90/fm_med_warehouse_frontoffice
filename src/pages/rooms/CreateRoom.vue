@@ -1,5 +1,5 @@
 <script setup>
-import axios from "axios";
+import api from "../../services/api";
 import { ref } from "vue";
 import { useConfigStore } from "../../stores/configStore";
 import { useToast } from "vue-toast-notification";
@@ -17,7 +17,7 @@ const form = ref({
 
 const handleSubmit = async () => {
   try {
-    await axios
+    await api
       .post(`${configStore.apiBaseUrl}/clinic_rooms/store`, form.value, {
         headers: {
           Authorization: `Bearer ${token}`,
