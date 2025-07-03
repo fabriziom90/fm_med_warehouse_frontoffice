@@ -18,7 +18,7 @@ const form = ref({
 const handleSubmit = async () => {
   try {
     await api
-      .post(`${configStore.apiBaseUrl}/clinic_rooms/store`, form.value, {
+      .post(`${configStore.apiBaseUrl}/products/store`, form.value, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -30,7 +30,7 @@ const handleSubmit = async () => {
             duration: 1500,
           });
           setTimeout(() => {
-            router.push({ name: "indexRooms" });
+            router.push({ name: "indexProducts" });
           }, 1500);
         } else {
           $toast.error(resp.data.message, {
@@ -56,21 +56,21 @@ const handleSubmit = async () => {
     <div class="row">
       <div class="col-12">
         <div class="d-flex justify-content-between align-items-center">
-          <h2 class="fs-1">Aggiungi nuova stanza</h2>
+          <h2 class="fs-1">Aggiungi nuovo prodotto</h2>
           <router-link to="/admin/rooms" class="btn-main"
-            >Visualizza stanze</router-link
+            >Visualizza prodotti</router-link
           >
         </div>
       </div>
       <div class="col-12">
         <form @submit.prevent="handleSubmit">
           <div class="mb-4">
-            <label class="form-label">Nome stanza</label>
+            <label class="form-label">Nome prodotto</label>
             <input
               type="text"
               name="name"
               id="name"
-              placeholder="Inserisci il nome della stanza"
+              placeholder="Inserisci il nome del prodotto"
               class="form-control"
               v-model="form.name"
             />

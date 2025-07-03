@@ -20,8 +20,18 @@
             ><i class="fas fa-door-closed me-2"></i>Stanze</router-link
           >
         </li>
-        <li>
-          <a href="#"><i class="fa-solid fa-stethoscope me-2"></i>Prodotti</a>
+        <li
+          :class="
+            this.$route.matched.some((route) =>
+              route.path.includes('/products')
+            )
+              ? 'active'
+              : ''
+          "
+        >
+          <router-link to="/admin/products"
+            ><i class="fa-solid fa-stethoscope me-2"></i>Prodotti</router-link
+          >
         </li>
         <li>
           <a href="#"><i class="fa-solid fa-pills me-2"></i>Medicinali</a>

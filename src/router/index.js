@@ -11,6 +11,7 @@ import EditRoom from '../pages/rooms/EditRoom.vue';
 
 // products components
 import Products from '../pages/products/Products.vue';
+import CreateProduct from '../pages/products/CreateProduct.vue';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -57,6 +58,11 @@ const router = createRouter({
                             path: '',
                             name: 'indexProduct',
                             component: Products
+                        },
+                        {
+                            path: 'create',
+                            name: 'createProduct',
+                            component: CreateProduct
                         }
                     ]
                 }

@@ -27,8 +27,8 @@ const columns = [
     },
   },
 ];
-const rooms = ref([]);
-const selectedRoom = ref(null);
+const products = ref([]);
+const selectedProduct = ref(null);
 const isModalOpen = ref(false);
 // get local token
 const token = localStorage.getItem("token");
@@ -48,23 +48,23 @@ defaultOptions.rowCallback = function (row, data) {
   const editBtn = row.querySelector("a.btn-warning");
   if (deleteBtn) {
     deleteBtn.onclick = () => {
-      selectedRoom.value = data;
+      selectedProduct.value = data;
       isModalOpen.value = true;
     };
   }
   if (editBtn) {
     editBtn.onclick = (e) => {
       e.preventDefault();
-      router.push({ name: "editRoom", params: { id: data._id } });
+      router.push({ name: "editProduct", params: { id: data._id } });
     };
   }
 };
 
 onMounted(() => {
-  getRooms();
+  getProducts();
 });
 
-const getRooms = () => {
+const getProducts = () => {
   try {
     api
       .get(`${configStore.apiBaseUrl}/products`, {
@@ -73,7 +73,7 @@ const getRooms = () => {
         },
       })
       .then((resp) => {
-        rooms.value = resp.data.clinicRooms;
+        products.value = resp.data.products;
       });
   } catch (err) {
     err.response.data.message;
@@ -83,7 +83,7 @@ const getRooms = () => {
 const confirmDelete = async () => {
   await api
     .delete(
-      `${configStore.apiBaseUrl}/products/delete/${selectedRoom.value._id}`,
+      `${configStore.apiBaseUrl}/products/delete/${selectedProduct.value._id}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -98,7 +98,7 @@ const confirmDelete = async () => {
           duration: 3000,
         });
         closeModal();
-        await getRooms();
+        await getProducts();
       } else {
         $toast.error(message, {
           position: "top-right",
@@ -119,7 +119,7 @@ function closeModal() {
         <div class="col-12">
           <div class="d-flex justify-content-between align-items-center">
             <h2 class="fs-1">Elenco prodotti</h2>
-            <router-link class="btn-main" to="/admin/rooms/create"
+            <router-link class="btn-main" to="/admin/products/create"
               >Aggiungi prodotto</router-link
             >
           </div>
@@ -134,6 +134,7 @@ function closeModal() {
             v-if="products.length"
           >
           </DataTable>
+          <div v-else><h2>Non sono stati ancora inseriti prodotti</h2></div>
         </div>
       </div>
     </div>
