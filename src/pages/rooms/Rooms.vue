@@ -1,20 +1,62 @@
 <script setup>
 import axios from "axios";
-import { ref, inject, onMounted } from "vue";
+import { ref, inject, onMounted, defineEmits } from "vue";
+import { useToast } from "vue-toast-notification";
 import DataTable from "datatables.net-vue3";
+import Modal from "./Modal.vue";
 
 // import store
 import { useConfigStore } from "../../stores/configStore";
 
-const defaultOptions = inject("datatableOptions");
-defaultOptions.paging = false;
+// define variables
+const columns = [
+  { title: "Nome", data: "name" },
+  {
+    title: "Strumenti",
+    data: null,
+    render: function (data, type, row) {
+      return `
+        <a href="/admin/rooms/${row._id}/edit" class="btn btn-warning btn-sm me-2">
+          <i class="fas fa-edit"></i>
+        </a>
+        <button class="btn btn-danger btn-sm" data-id="${row._id}">
+          <i class="fas fa-trash"></i>
+        </button>
+      `;
+    },
+  },
+];
+const rooms = ref([]);
+const selectedRoom = ref(null);
+const isModalOpen = ref(false);
+// get local token
 const token = localStorage.getItem("token");
 
+// define toast
+const $toast = useToast();
+
+// use pinia store
 const configStore = useConfigStore();
 
-const rooms = ref([]);
+// import default datatableOptions
+const defaultOptions = inject("datatableOptions");
+defaultOptions.paging = false;
+defaultOptions.columns = columns;
+defaultOptions.rowCallback = function (row, data) {
+  const deleteBtn = row.querySelector("button.btn-danger");
+  if (deleteBtn) {
+    deleteBtn.onclick = () => {
+      selectedRoom.value = data;
+      isModalOpen.value = true;
+    };
+  }
+};
 
 onMounted(() => {
+  getRooms();
+});
+
+const getRooms = () => {
   try {
     axios
       .get(`${configStore.apiBaseUrl}/clinic_rooms`, {
@@ -28,7 +70,39 @@ onMounted(() => {
   } catch (err) {
     err.response.data.message;
   }
-});
+};
+
+const confirmDelete = async () => {
+  await axios
+    .delete(
+      `${configStore.apiBaseUrl}/clinic_rooms/delete/${selectedRoom.value._id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    .then(async (resp) => {
+      const { result, message } = resp.data;
+      if (result) {
+        $toast.success(message, {
+          position: "top-right",
+          duration: 3000,
+        });
+        closeModal();
+        await getRooms();
+      } else {
+        $toast.error(message, {
+          position: "top-right",
+          duration: 3000,
+        });
+      }
+    });
+};
+
+function closeModal() {
+  isModalOpen.value = false;
+}
 </script>
 <template lang="">
   <div class="m-3">
@@ -48,37 +122,19 @@ onMounted(() => {
           <DataTable
             class="display table table-striped mt-3"
             :options="defaultOptions"
+            :data="rooms"
             v-if="rooms.length"
           >
-            <thead>
-              <tr>
-                <th>Id</th>
-                <th>Nome</th>
-                <th>Strumenti</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(room, index) in rooms" :key="room._id">
-                <td>{{ index + 1 }}</td>
-                <td>{{ room.name }}</td>
-                <td>
-                  <router-link
-                    :to="`/admin/rooms/${room._id}/edit`"
-                    class="btn btn-warning rounded-0 me-2"
-                  >
-                    <i class="fas fa-edit"></i>
-                  </router-link>
-                  <button class="btn btn-danger rounded-0">
-                    <i class="fas fa-trash"></i>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
           </DataTable>
         </div>
       </div>
     </div>
   </div>
+  <Modal
+    v-if="isModalOpen"
+    @close="closeModal"
+    @handleConfirmDelete="confirmDelete"
+  />
 </template>
 <style lang="scss" scoped>
 @use "../../styles/generals.scss";
