@@ -4,6 +4,7 @@ import { ref, inject, onMounted, defineEmits } from "vue";
 import { useToast } from "vue-toast-notification";
 import DataTable from "datatables.net-vue3";
 import Modal from "./Modal.vue";
+import { router } from "../../router/index.js";
 
 // import store
 import { useConfigStore } from "../../stores/configStore";
@@ -16,7 +17,7 @@ const columns = [
     data: null,
     render: function (data, type, row) {
       return `
-        <a href="/admin/rooms/${row._id}/edit" class="btn btn-warning btn-sm me-2">
+        <a href="#" data-edit-id="${row._id}" class="btn btn-warning btn-sm me-2">
           <i class="fas fa-edit"></i>
         </a>
         <button class="btn btn-danger btn-sm" data-id="${row._id}">
@@ -44,10 +45,17 @@ defaultOptions.paging = false;
 defaultOptions.columns = columns;
 defaultOptions.rowCallback = function (row, data) {
   const deleteBtn = row.querySelector("button.btn-danger");
+  const editBtn = row.querySelector("a.btn-warning");
   if (deleteBtn) {
     deleteBtn.onclick = () => {
       selectedRoom.value = data;
       isModalOpen.value = true;
+    };
+  }
+  if (editBtn) {
+    editBtn.onclick = (e) => {
+      e.preventDefault();
+      router.push({ name: "editRoom", params: { id: data._id } });
     };
   }
 };
