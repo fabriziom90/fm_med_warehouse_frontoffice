@@ -1,10 +1,10 @@
 <script setup></script>
 <template lang="">
   <div id="sidebar">
-    <router-link to="/admin">
+    <router-link to="/admin" class="text-decoration-none">
       <div class="top-sidebar">
         <img src="/logo.png" alt="" />
-        <h2 class="fs-5 mt-3 text-white text-decoration-none">MediStock</h2>
+        <h2 class="fs-5 mt-3 text-white">MediStock</h2>
       </div>
     </router-link>
     <div class="middle-sidebar">
@@ -33,8 +33,16 @@
             ><i class="fa-solid fa-stethoscope me-2"></i>Prodotti</router-link
           >
         </li>
-        <li>
-          <a href="#"><i class="fa-solid fa-pills me-2"></i>Medicinali</a>
+        <li
+          :class="
+            this.$route.matched.some((route) => route.path.includes('/drugs'))
+              ? 'active'
+              : ''
+          "
+        >
+          <router-link to="/admin/drugs"
+            ><i class="fa-solid fa-pills me-2"></i>Medicinali</router-link
+          >
         </li>
       </ul>
     </div>
@@ -61,6 +69,11 @@
   align-items: center;
   height: 90px;
   border-bottom: 1px solid #fff;
+
+  .text-decoration-none {
+    text-decoration: none;
+  }
+
   img {
     width: 75px;
   }

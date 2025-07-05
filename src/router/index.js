@@ -12,6 +12,12 @@ import EditRoom from '../pages/rooms/EditRoom.vue';
 // products components
 import Products from '../pages/products/Products.vue';
 import CreateProduct from '../pages/products/CreateProduct.vue';
+import EditProduct from '../pages/products/EditProduct.vue';
+
+// drugs components
+import Drugs from '../pages/drugs/Drugs.vue';
+import CreateDrug from '../pages/drugs/CreateDrug.vue';
+import EditDrug from '../pages/drugs/EditDrug.vue';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -56,13 +62,38 @@ const router = createRouter({
                     children: [
                         {
                             path: '',
-                            name: 'indexProduct',
+                            name: 'indexProducts',
                             component: Products
                         },
                         {
                             path: 'create',
                             name: 'createProduct',
                             component: CreateProduct
+                        },
+                        {
+                            path: ':id/edit',
+                            name: 'editProduct',
+                            component: EditProduct
+                        }
+                    ]
+                },
+                {
+                    path: "drugs",
+                    children: [
+                        {
+                            path: '',
+                            name: 'indexDrugs',
+                            component: Drugs
+                        },
+                        {
+                            path: 'create',
+                            name: 'createDrug',
+                            component: CreateDrug
+                        },
+                        {
+                            path: ':id/edit',
+                            name: 'editDrug',
+                            component: EditDrug
                         }
                     ]
                 }

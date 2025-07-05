@@ -27,8 +27,8 @@ const columns = [
     },
   },
 ];
-const products = ref(null);
-const selectedProduct = ref(null);
+const drugs = ref(null);
+const selectedDrug = ref(null);
 const isModalOpen = ref(false);
 // get local token
 const token = localStorage.getItem("token");
@@ -48,32 +48,32 @@ defaultOptions.rowCallback = function (row, data) {
   const editBtn = row.querySelector("a.btn-warning");
   if (deleteBtn) {
     deleteBtn.onclick = () => {
-      selectedProduct.value = data;
+      selectedDrug.value = data;
       isModalOpen.value = true;
     };
   }
   if (editBtn) {
     editBtn.onclick = (e) => {
       e.preventDefault();
-      router.push({ name: "editProduct", params: { id: data._id } });
+      router.push({ name: "editDrug", params: { id: data._id } });
     };
   }
 };
 
 onMounted(() => {
-  getProducts();
+  getDrugs();
 });
 
-const getProducts = () => {
+const getDrugs = () => {
   try {
     api
-      .get(`${configStore.apiBaseUrl}/products`, {
+      .get(`${configStore.apiBaseUrl}/drugs`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
       .then((resp) => {
-        products.value = resp.data.products;
+        drugs.value = resp.data.drugs;
       });
   } catch (err) {
     err.response.data.message;
@@ -83,7 +83,7 @@ const getProducts = () => {
 const confirmDelete = async () => {
   await api
     .delete(
-      `${configStore.apiBaseUrl}/products/delete/${selectedProduct.value._id}`,
+      `${configStore.apiBaseUrl}/drugs/delete/${selectedDrug.value._id}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -98,7 +98,7 @@ const confirmDelete = async () => {
           duration: 3000,
         });
         closeModal();
-        await getProducts();
+        await getDrugs();
       } else {
         $toast.error(message, {
           position: "top-right",
@@ -118,24 +118,24 @@ function closeModal() {
       <div class="row">
         <div class="col-12">
           <div class="d-flex justify-content-between align-items-center">
-            <h2 class="fs-1">Elenco prodotti</h2>
-            <router-link class="btn-main" to="/admin/products/create"
-              >Aggiungi prodotto</router-link
+            <h2 class="fs-1">Elenco medicinali</h2>
+            <router-link class="btn-main" to="/admin/drugs/create"
+              >Aggiungi medicinale</router-link
             >
           </div>
         </div>
       </div>
-      <div class="row" v-if="products">
+      <div class="row" v-if="drugs">
         <div class="col-12">
           <DataTable
             class="display table table-striped mt-3"
             :options="defaultOptions"
-            :data="products"
-            v-if="products.length > 0"
+            :data="drugs"
+            v-if="drugs.length > 0"
           >
           </DataTable>
-          <div v-else-if="products.length === 0">
-            <h2>Non sono stati ancora inseriti prodotti</h2>
+          <div v-else-if="drugs.length === 0">
+            <h2>Non sono stati ancora inseriti medicinali</h2>
           </div>
         </div>
       </div>

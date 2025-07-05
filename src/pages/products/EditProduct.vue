@@ -7,13 +7,12 @@ import { router } from "../../router/index.js";
 import { useRoute } from "vue-router";
 
 const configStore = useConfigStore();
+const route = useRoute();
 
 const token = localStorage.getItem("token");
+const productId = route.params.id;
 
 const $toast = useToast();
-
-const route = useRoute();
-const roomId = route.params.id;
 
 const form = ref({
   name: "",
@@ -21,11 +20,13 @@ const form = ref({
 
 onMounted(() => {
   api
-    .get(`${configStore.apiBaseUrl}/clinic_rooms/${roomId}/get`, {
-      headers: { Authorization: `Bearer ${token}` },
+    .get(`${configStore.apiBaseUrl}/products/${productId}/get`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     })
     .then((resp) => {
-      form.value.name = resp.data.clinicRoom.name;
+      form.value.name = resp.data.product.name;
     });
 });
 
@@ -33,7 +34,7 @@ const handleSubmit = async () => {
   try {
     await api
       .patch(
-        `${configStore.apiBaseUrl}/clinic_rooms/${roomId}/update`,
+        `${configStore.apiBaseUrl}/products/${productId}/update`,
         form.value,
         {
           headers: {
@@ -48,7 +49,7 @@ const handleSubmit = async () => {
             duration: 1500,
           });
           setTimeout(() => {
-            router.push({ name: "indexRooms" });
+            router.push({ name: "indexProducts" });
           }, 1500);
         } else {
           $toast.error(resp.data.message, {
@@ -59,17 +60,13 @@ const handleSubmit = async () => {
       });
   } catch (err) {
     console.log(err);
-    if (err.response) {
-      $toast.error(err.response.data.message, {
-        position: "top-right",
-        duration: 3000,
-      });
-    } else {
-      $toast.error(err.data.message, {
-        position: "top-right",
-        duration: 3000,
-      });
-    }
+    $toast.error(err.data.message, {
+      position: "top-right",
+      duration: 3000,
+    });
+    // setTimeout(() => {
+    //   router.push({ name: "login" });
+    // }, 1500);
   }
 };
 </script>
@@ -78,21 +75,21 @@ const handleSubmit = async () => {
     <div class="row">
       <div class="col-12">
         <div class="d-flex justify-content-between align-items-center">
-          <h2 class="fs-1">Modifica stanza</h2>
-          <router-link to="/admin/rooms" class="btn-main"
-            >Visualizza stanze</router-link
+          <h2 class="fs-1">Modifica prodotto</h2>
+          <router-link to="/admin/products" class="btn-main"
+            >Visualizza prodotti</router-link
           >
         </div>
       </div>
       <div class="col-12">
         <form @submit.prevent="handleSubmit">
           <div class="mb-4">
-            <label class="form-label">Nome stanza</label>
+            <label class="form-label">Nome prodotto</label>
             <input
               type="text"
               name="name"
               id="name"
-              placeholder="Inserisci il nome della stanza"
+              placeholder="Inserisci il nome del prodotto"
               class="form-control"
               v-model="form.name"
             />

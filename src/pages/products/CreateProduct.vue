@@ -44,7 +44,6 @@ const handleSubmit = async () => {
       position: "top-right",
       duration: 3000,
     });
-
     // setTimeout(() => {
     //   router.push({ name: "login" });
     // }, 1500);
@@ -57,7 +56,7 @@ const handleSubmit = async () => {
       <div class="col-12">
         <div class="d-flex justify-content-between align-items-center">
           <h2 class="fs-1">Aggiungi nuovo prodotto</h2>
-          <router-link to="/admin/rooms" class="btn-main"
+          <router-link to="/admin/products" class="btn-main"
             >Visualizza prodotti</router-link
           >
         </div>
