@@ -6,7 +6,7 @@
 
 @import '@fortawesome/fontawesome-free/css/all.css';
 
-body{
+body, .font-montserrat{
     font-family: "Montserrat", sans-serif;
 }
 
@@ -46,3 +46,4 @@ h1,h2,h3,h4,h5,h6{
 .page-item:first-child .page-link, .page-item:last-child .page-link{
     border-radius: 0px;
 }
+

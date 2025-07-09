@@ -33,17 +33,8 @@ const handleSubmit = async () => {
       .then((resp) => {
         const token = resp.data.token;
         localStorage.setItem("token", token);
-        $toast.success(
-          "Login effettuato con successo. A breve verrai verrai reindirizzata alla dashboard",
-          {
-            position: "top-right",
-            duration: 3000,
-          }
-        );
 
-        setTimeout(() => {
-          router.push({ name: "dashboard" });
-        }, 3000);
+        router.push({ name: "dashboard" });
       });
   } catch (err) {
     $toast.error(err.response.data.message, {

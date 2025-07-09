@@ -17,6 +17,9 @@ const columns = [
     data: null,
     render: function (data, type, row) {
       return `
+        <a href="#" data-show-id="${row._id}" class="btn btn-primary btn-sm me-2">
+          <i class="fas fa-eye"></i>
+        </a>
         <a href="#" data-edit-id="${row._id}" class="btn btn-warning btn-sm me-2">
           <i class="fas fa-edit"></i>
         </a>
@@ -46,6 +49,8 @@ defaultOptions.columns = columns;
 defaultOptions.rowCallback = function (row, data) {
   const deleteBtn = row.querySelector("button.btn-danger");
   const editBtn = row.querySelector("a.btn-warning");
+  const showBtn = row.querySelector("a.btn-primary");
+
   if (deleteBtn) {
     deleteBtn.onclick = () => {
       selectedRoom.value = data;
@@ -56,6 +61,13 @@ defaultOptions.rowCallback = function (row, data) {
     editBtn.onclick = (e) => {
       e.preventDefault();
       router.push({ name: "editRoom", params: { id: data._id } });
+    };
+  }
+  if (showBtn) {
+    console.log(showBtn);
+    showBtn.onclick = (e) => {
+      e.preventDefault();
+      router.push({ name: "showRoom", params: { id: data._id } });
     };
   }
 };

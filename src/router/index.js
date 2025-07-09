@@ -6,6 +6,7 @@ import Dashboard from '../pages/Dashboard.vue'
 
 // rooms components
 import Rooms from '../pages/rooms/Rooms.vue';
+import ShowRoom from '../pages/rooms/ShowRoom.vue';
 import CreateRoom from '../pages/rooms/CreateRoom.vue';
 import EditRoom from '../pages/rooms/EditRoom.vue';
 
@@ -43,6 +44,11 @@ const router = createRouter({
                             path: '',
                             name: 'indexRooms',
                             component: Rooms
+                        },
+                        {
+                            path: ':id/show',
+                            name: 'showRoom',
+                            component: ShowRoom
                         },
                         {
                             path: 'create',
