@@ -6,12 +6,15 @@ import { useRoute } from "vue-router";
 import { useConfigStore } from "../../stores/configStore.js";
 
 import ModalUploadCsv from "./ModalUploadCsv.vue";
+import InventoryProductTable from "../../components/InventoryProductTable.vue";
+import InventoryDrugTable from "../../components/InventoryDrugTable.vue";
 
 const route = useRoute();
 
 const roomId = route.params.id;
 const room = ref("");
 const type = ref("");
+
 const inventoryProducts = ref(null);
 const inventoryDrugs = ref(null);
 const isModalOpen = ref(false);
@@ -63,7 +66,8 @@ const loadInventoryDrugs = () => {
 };
 
 // refresh the inventory vased on the active type clicked
-const refreshInventory = () => {
+const refreshInventory = (currentType) => {
+  type.value = currentType;
   if (type.value === "Prodotti") {
     loadInventoryProducts();
   } else {
@@ -77,18 +81,8 @@ const openModal = (currentType) => {
 };
 
 function closeModal() {
-  console.log("ciao");
   isModalOpen.value = false;
 }
-
-const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const year = date.getFullYear();
-
-  return `${day}/${month}/${year}`;
-};
 </script>
 <template lang="">
   <div class="m-3">
@@ -109,61 +103,14 @@ const formatDate = (dateString) => {
             </div>
           </div>
         </div>
-        <div class="col-12 col-md-6" v-if="inventoryProducts">
-          <div class="border-right-main p-4">
-            <h2>Prodotti</h2>
-            <table
-              class="table table-striped"
-              v-if="inventoryProducts.length > 0"
-            >
-              <thead>
-                <tr>
-                  <th>Nome</th>
-                  <th>Quantità</th>
-                  <th>Scadenza</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="ip in inventoryProducts" :key="ip._id">
-                  <td>{{ ip.product.name }}</td>
-                  <td>{{ ip.quantity }}</td>
-                  <td>
-                    {{ formatDate(ip.expirationDate) }}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <div v-else>
-              <h3 class="font-montserrat">Nessun prodotto inserito</h3>
-            </div>
-          </div>
-        </div>
-        <div class="col-12 col-md-6" v-if="inventoryDrugs">
-          <div class="p-4">
-            <h2>Medicinali</h2>
-            <table class="table table-striped" v-if="inventoryDrugs.length > 0">
-              <thead>
-                <tr>
-                  <th>Nome</th>
-                  <th>Quantità</th>
-                  <th>Scadenza</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="ip in inventoryDrugs" :key="ip._id">
-                  <td>{{ ip.drug.name }}</td>
-                  <td>{{ ip.quantity }}</td>
-                  <td>
-                    {{ formatDate(ip.expirationDate) }}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <div v-else>
-              <h3 class="font-montserrat">Nessun medicinale inserito</h3>
-            </div>
-          </div>
-        </div>
+        <InventoryProductTable
+          :inventoryProducts="inventoryProducts"
+          @refresh="refreshInventory"
+        />
+        <InventoryDrugTable
+          :inventoryDrugs="inventoryDrugs"
+          @refresh="refreshInventory"
+        />
       </div>
     </div>
   </div>
@@ -176,10 +123,4 @@ const formatDate = (dateString) => {
   />
 </template>
 
-<style lang="scss" scoped>
-@use "../../styles/_partials/_variables.scss" as *;
-@use "../../styles/generals.scss";
-.border-right-main {
-  border-right: 1px solid $mainColor;
-}
-</style>
+<style lang="scss" scoped></style>

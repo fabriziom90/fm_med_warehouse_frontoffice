@@ -55,7 +55,6 @@ const handleSubmit = async () => {
         }
       });
   } catch (err) {
-    console.log(err);
     $toast.error(err.data.message, {
       position: "top-right",
       duration: 3000,

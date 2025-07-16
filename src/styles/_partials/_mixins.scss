@@ -9,3 +9,9 @@
     }
     
 }
+
+@mixin buttonCommon{
+  padding: 10px 30px;
+    transition: 0.3s;
+    text-decoration: none;
+}

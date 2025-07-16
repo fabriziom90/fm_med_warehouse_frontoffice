@@ -16,15 +16,27 @@ h1,h2,h3,h4,h5,h6{
 
 .btn-main{
     background-color: $mainColor;
-    padding: 10px 30px;
     border: 1px solid $mainColor;
     color: #fff;
+    padding: 10px 30px;
     transition: 0.3s;
     text-decoration: none;
 
     &:hover{
         background-color: $hoverMain;
         color: #fff;
+    }
+}
+
+.btn-white{
+     @include buttonCommon;
+     background-color: #fff;
+     border: 1px solid #fff;
+    color: $mainColor; 
+     &:hover{
+        background-color: #e7e7e7;
+        color: $mainColor;
+        font-weight: 700;
     }
 }
 

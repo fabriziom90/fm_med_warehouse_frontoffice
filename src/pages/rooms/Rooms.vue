@@ -64,7 +64,6 @@ defaultOptions.rowCallback = function (row, data) {
     };
   }
   if (showBtn) {
-    console.log(showBtn);
     showBtn.onclick = (e) => {
       e.preventDefault();
       router.push({ name: "showRoom", params: { id: data._id } });
