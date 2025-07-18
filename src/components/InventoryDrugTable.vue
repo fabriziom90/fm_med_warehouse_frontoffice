@@ -5,6 +5,8 @@ import { useToast } from "vue-toast-notification";
 import { useRoute } from "vue-router";
 import { useConfigStore } from "../stores/configStore.js";
 
+import Modal from "./Modal.vue";
+
 const props = defineProps({
   inventoryDrugs: Array,
 });
@@ -20,6 +22,29 @@ const editDrugExpirationDate = ref(false);
 const actualDrug = ref(null);
 const editQuantity = ref(null);
 const editExpirationDate = ref(null);
+const showInventoryDrugForm = ref(false);
+const drugs = ref(null);
+const isModalOpen = ref(false);
+
+const form = ref({
+  drug: "",
+  quantity: null,
+  expirationDate: null,
+  roomId: null,
+});
+
+onMounted(() => {
+  form.value.roomId = route.params.id;
+  api
+    .get(`${configStore.apiBaseUrl}/drugs`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((resp) => {
+      drugs.value = resp.data.drugs;
+    });
+});
 
 // get local token
 const token = localStorage.getItem("token");
@@ -119,12 +144,124 @@ const onEditDrugExpirationDate = (checked, id, expirationDate) => {
     actualDrug.value = id;
   }
 };
+
+const handleSubmit = async (req, res) => {
+  api
+    .post(`${configStore.apiBaseUrl}/inventory_drugs/create`, form.value, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((resp) => {
+      const { result, message } = resp.data;
+      if (result) {
+        $toast.success(message, {
+          position: "top-right",
+          duration: 1500,
+        });
+        emit("refresh", "Medicinali");
+        showInventoryDrugForm.value = false;
+        form.value.drug = "";
+        form.value.quantity = null;
+        form.value.expirationDate = null;
+      } else {
+        $toast.error(message, {
+          position: "top-right",
+          duration: 1500,
+        });
+      }
+    });
+};
+
+const openModal = (id) => {
+  isModalOpen.value = true;
+  actualDrug.value = id;
+};
+
+const closeModal = () => {
+  isModalOpen.value = false;
+};
+
+const confirmDelete = async () => {
+  await api
+    .delete(
+      `${configStore.apiBaseUrl}/inventory_drugs/${actualDrug.value}/delete`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    .then(async (resp) => {
+      const { result, message } = resp.data;
+      if (result) {
+        $toast.success(message, {
+          position: "top-right",
+          duration: 3000,
+        });
+        closeModal();
+        actualDrug.value = null;
+        emit("refresh", "Medicinali");
+      } else {
+        $toast.error(message, {
+          position: "top-right",
+          duration: 3000,
+        });
+      }
+    });
+};
 </script>
 <template lang="">
   <div class="col-12 col-md-6" v-if="inventoryDrugs">
     <div class="border-right-main p-4">
-      <h2>Medicinali</h2>
-      <table class="table table-striped" v-if="inventoryDrugs.length > 0">
+      <div class="d-flex justify-content-between align-items-center">
+        <h2>Medicinali</h2>
+        <button
+          class="btn btn-main"
+          @click="
+            showInventoryDrugForm
+              ? (showInventoryDrugForm = false)
+              : (showInventoryDrugForm = true)
+          "
+        >
+          Aggiungi medicinale
+        </button>
+      </div>
+      <div v-if="showInventoryDrugForm" class="mt-4">
+        <form @submit.prevent="handleSubmit" class="bg-main p-4">
+          <div class="row gy-3 mt-4">
+            <div class="col-12 col-md-4">
+              <select class="form-select" v-model="form.drug">
+                <option value="">Seleziona prodotto</option>
+                <option v-for="drug in drugs" :key="drug._id" :value="drug._id">
+                  {{ drug.name }}
+                </option>
+              </select>
+            </div>
+            <div class="col-12 col-md-4">
+              <input
+                type="number"
+                min="0"
+                placeholder="Inserisci quantità"
+                class="form-control"
+                v-model="form.quantity"
+              />
+            </div>
+            <div class="col-12 col-md-4">
+              <input
+                type="date"
+                class="form-control"
+                placeholder="Inserisci data di scadenza"
+                v-model="form.expirationDate"
+              />
+            </div>
+            <div class="col-12">
+              <button type="submit" class="btn btn-white">Salva</button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <table class="table table-striped mt-4" v-if="inventoryDrugs.length > 0">
         <thead>
           <tr>
             <th>Nome</th>
@@ -134,7 +271,12 @@ const onEditDrugExpirationDate = (checked, id, expirationDate) => {
         </thead>
         <tbody>
           <tr v-for="ip in inventoryDrugs" :key="ip._id">
-            <td>{{ ip.drug.name }}</td>
+            <td>
+              {{ ip.drug.name }}
+              <button class="not-button" @click="openModal(ip._id)">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
             <td>
               <div class="d-flex justify-content-between align-items-center">
                 <span v-if="!editDrugQuantity || actualDrug !== ip._id">
@@ -191,6 +333,11 @@ const onEditDrugExpirationDate = (checked, id, expirationDate) => {
       </div>
     </div>
   </div>
+  <Modal
+    v-if="isModalOpen"
+    @close="closeModal"
+    @handleConfirmDelete="confirmDelete"
+  />
 </template>
 <style lang="scss" scoped>
 @use "../styles/_partials/_variables.scss" as *;

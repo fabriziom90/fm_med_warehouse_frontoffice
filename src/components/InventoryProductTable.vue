@@ -160,7 +160,7 @@ const handleSubmit = async (req, res) => {
           duration: 1500,
         });
         emit("refresh", "Prodotti");
-        showInventoryProductForm = false;
+        showInventoryProductForm.value = false;
         form.value.product = "";
         form.value.quantity = null;
         form.value.expirationDate = null;
