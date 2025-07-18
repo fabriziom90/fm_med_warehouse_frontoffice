@@ -5,6 +5,8 @@ import { useToast } from "vue-toast-notification";
 import { useRoute } from "vue-router";
 import { useConfigStore } from "../stores/configStore.js";
 
+import Modal from "./Modal.vue";
+
 const props = defineProps({
   inventoryProducts: Array,
 });
@@ -22,6 +24,7 @@ const editQuantity = ref(null);
 const editExpirationDate = ref(null);
 const showInventoryProductForm = ref(false);
 const products = ref(null);
+const isModalOpen = ref(false);
 
 const form = ref({
   product: "",
@@ -169,6 +172,44 @@ const handleSubmit = async (req, res) => {
       }
     });
 };
+
+const openModal = (id) => {
+  isModalOpen.value = true;
+  actualProduct.value = id;
+};
+
+const closeModal = () => {
+  isModalOpen.value = false;
+};
+
+const confirmDelete = async () => {
+  await api
+    .delete(
+      `${configStore.apiBaseUrl}/inventory_products/${actualProduct.value}/delete`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    .then(async (resp) => {
+      const { result, message } = resp.data;
+      if (result) {
+        $toast.success(message, {
+          position: "top-right",
+          duration: 3000,
+        });
+        closeModal();
+        actualProduct.value = null;
+        emit("refresh", "Prodotti");
+      } else {
+        $toast.error(message, {
+          position: "top-right",
+          duration: 3000,
+        });
+      }
+    });
+};
 </script>
 <template lang="">
   <div class="col-12 col-md-6" v-if="inventoryProducts">
@@ -237,7 +278,12 @@ const handleSubmit = async (req, res) => {
         </thead>
         <tbody>
           <tr v-for="ip in inventoryProducts" :key="ip._id">
-            <td>{{ ip.product.name }}</td>
+            <td>
+              {{ ip.product.name }}
+              <button class="not-button" @click="openModal(ip._id)">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
             <td>
               <div class="d-flex justify-content-between align-items-center">
                 <span v-if="!editProductQuantity || actualProduct !== ip._id">
@@ -299,6 +345,11 @@ const handleSubmit = async (req, res) => {
         <h3 class="font-montserrat">Nessun prodotto inserito</h3>
       </div>
     </div>
+    <Modal
+      v-if="isModalOpen"
+      @close="closeModal"
+      @handleConfirmDelete="confirmDelete"
+    />
   </div>
 </template>
 <style lang="scss" scoped>
