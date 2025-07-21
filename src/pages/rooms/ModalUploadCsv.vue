@@ -44,7 +44,7 @@ const loadInventory = async (type) => {
             duration: 3000,
           });
           emit("close");
-          emit("uploaded");
+          emit("uploaded", "Medicinali");
         } else {
           $toast.error(message, {
             position: "top-right",
@@ -74,7 +74,7 @@ const loadInventory = async (type) => {
           });
 
           emit("close");
-          emit("uploaded");
+          emit("uploaded", "Prodotti");
         } else {
           $toast.error(message, {
             position: "top-right",
