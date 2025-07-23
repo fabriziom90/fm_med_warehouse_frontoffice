@@ -210,6 +210,13 @@ const confirmDelete = async () => {
       }
     });
 };
+
+const checkExpirationDate = (day) => {
+  const today = new Date();
+  const difference = Math.abs(day - today);
+  const days = difference / (1000 * 60 * 60 * 24);
+  return days < 15;
+};
 </script>
 <template lang="">
   <div class="col-12 col-md-6" v-if="inventoryDrugs">
@@ -279,7 +286,10 @@ const confirmDelete = async () => {
             </td>
             <td>
               <div class="d-flex justify-content-between align-items-center">
-                <span v-if="!editDrugQuantity || actualDrug !== ip._id">
+                <span
+                  v-if="!editDrugQuantity || actualDrug !== ip._id"
+                  :class="ip.quantity <= 5 ? 'text-danger fw-bold' : ''"
+                >
                   {{ ip.quantity }}
                 </span>
                 <input
@@ -301,7 +311,14 @@ const confirmDelete = async () => {
             </td>
             <td>
               <div class="d-flex justify-content-between align-items-center">
-                <span v-if="!editDrugExpirationDate || actualDrug !== ip._id">
+                <span
+                  v-if="!editDrugExpirationDate || actualDrug !== ip._id"
+                  :class="
+                    checkExpirationDate(ip.expirationDate)
+                      ? 'text-danger fw-bold'
+                      : ''
+                  "
+                >
                   {{ formatDate(ip.expirationDate) }}
                 </span>
                 <input
