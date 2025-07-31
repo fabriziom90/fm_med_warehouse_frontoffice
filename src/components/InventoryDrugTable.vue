@@ -288,7 +288,7 @@ const checkExpirationDate = (day) => {
               <div class="d-flex justify-content-between align-items-center">
                 <span
                   v-if="!editDrugQuantity || actualDrug !== ip._id"
-                  :class="ip.quantity <= 5 ? 'text-danger fw-bold' : ''"
+                  :class="ip.quantity <= 1 ? 'text-danger fw-bold' : ''"
                 >
                   {{ ip.quantity }}
                 </span>
