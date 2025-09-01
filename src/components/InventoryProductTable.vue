@@ -1,6 +1,6 @@
 <script setup>
 import api from "../services/api";
-import { ref, onMounted, inject, defineEmits } from "vue";
+import { ref, onMounted, inject, defineEmits, computed } from "vue";
 import { useToast } from "vue-toast-notification";
 import { useRoute } from "vue-router";
 import { useConfigStore } from "../stores/configStore.js";
@@ -25,6 +25,7 @@ const editExpirationDate = ref(null);
 const showInventoryProductForm = ref(false);
 const products = ref(null);
 const isModalOpen = ref(false);
+const search = ref("");
 
 const form = ref({
   product: "",
@@ -53,6 +54,19 @@ onMounted(() => {
     .then((resp) => {
       products.value = resp.data.products;
     });
+});
+
+const filteredProducts = computed(() => {
+  if (!props.inventoryProducts) return [];
+
+  if (search.value !== "") {
+    return props.inventoryProducts.filter((ip) => {
+      console.log(ip.product);
+      return ip.product.name.toLowerCase().includes(search.value.toLowerCase());
+    });
+  } else {
+    return props.inventoryProducts;
+  }
 });
 
 const handleChange = (quantity) => {
@@ -223,7 +237,7 @@ const checkExpirationDate = (day) => {
 };
 </script>
 <template lang="">
-  <div class="col-12 col-md-6" v-if="inventoryProducts">
+  <div class="col-12 col-md-6" v-if="filteredProducts">
     <div class="border-right-main p-4">
       <div class="d-flex justify-content-between align-items-center">
         <h2>Prodotti</h2>
@@ -276,9 +290,17 @@ const checkExpirationDate = (day) => {
           </div>
         </form>
       </div>
+      <div id="filter">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Filtra..."
+          v-model="search"
+        />
+      </div>
       <table
         class="table table-striped mt-4"
-        v-if="inventoryProducts.length > 0"
+        v-if="filteredProducts.length > 0"
       >
         <thead>
           <tr>
@@ -288,7 +310,7 @@ const checkExpirationDate = (day) => {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="ip in inventoryProducts" :key="ip._id">
+          <tr v-for="ip in filteredProducts" :key="ip._id">
             <td>
               {{ ip.product.name }}
               <button class="not-button" @click="openModal(ip._id)">
@@ -376,5 +398,9 @@ const checkExpirationDate = (day) => {
 @use "../styles/generals.scss";
 .border-right-main {
   border-right: 1px solid $mainColor;
+}
+
+#filter {
+  margin: 20px 0px;
 }
 </style>

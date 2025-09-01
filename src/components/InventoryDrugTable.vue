@@ -1,6 +1,6 @@
 <script setup>
 import api from "../services/api";
-import { ref, onMounted, inject, defineEmits } from "vue";
+import { ref, onMounted, inject, defineEmits, computed } from "vue";
 import { useToast } from "vue-toast-notification";
 import { useRoute } from "vue-router";
 import { useConfigStore } from "../stores/configStore.js";
@@ -25,6 +25,7 @@ const editExpirationDate = ref(null);
 const showInventoryDrugForm = ref(false);
 const drugs = ref(null);
 const isModalOpen = ref(false);
+const search = ref("");
 
 const form = ref({
   drug: "",
@@ -44,6 +45,18 @@ onMounted(() => {
     .then((resp) => {
       drugs.value = resp.data.drugs;
     });
+});
+
+const filteredDrugs = computed(() => {
+  if (!props.inventoryDrugs) return [];
+
+  if (search.value !== "") {
+    return props.inventoryDrugs.filter((id) => {
+      return id.drug.name.toLowerCase().includes(search.value.toLowerCase());
+    });
+  } else {
+    return props.inventoryDrugs;
+  }
 });
 
 // get local token
@@ -268,7 +281,15 @@ const checkExpirationDate = (day) => {
           </div>
         </form>
       </div>
-      <table class="table table-striped mt-4" v-if="inventoryDrugs.length > 0">
+      <div id="filter">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Filtra..."
+          v-model="search"
+        />
+      </div>
+      <table class="table table-striped mt-4" v-if="filteredDrugs.length > 0">
         <thead>
           <tr>
             <th>Nome</th>
@@ -277,7 +298,7 @@ const checkExpirationDate = (day) => {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="ip in inventoryDrugs" :key="ip._id">
+          <tr v-for="ip in filteredDrugs" :key="ip._id">
             <td>
               {{ ip.drug.name }}
               <button class="not-button" @click="openModal(ip._id)">
@@ -361,5 +382,9 @@ const checkExpirationDate = (day) => {
 @use "../styles/generals.scss";
 .border-right-main {
   border-right: 1px solid $mainColor;
+}
+
+#filter {
+  margin: 20px 0px;
 }
 </style>
