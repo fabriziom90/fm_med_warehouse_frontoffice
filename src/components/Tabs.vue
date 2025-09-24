@@ -71,42 +71,44 @@ const getInventory = () => {
       >
     </li>
   </ul>
-  <div class="row mt-4" v-if="loaded">
-    <div class="col-12 col-md-6">
-      <h2>Prodotti che stanno terminando</h2>
-      <DashboardTable
-        :items="currentProductsQuantity"
-        :type="'Prodotti'"
-        :danger="'qnt'"
-        v-if="currentProductsQuantity.length > 0"
-      />
-      <div v-else>Nessun prodotto che sta per terminare</div>
-      <h2>Prodotti in scadenza</h2>
-      <DashboardTable
-        :items="currentProductsExpiration"
-        :type="'Prodotti'"
-        :danger="'exp'"
-        v-if="currentProductsExpiration.length > 0"
-      />
-      <div v-else>Nessun prodotto che sta per scadere</div>
-    </div>
-    <div class="col-12 col-md-6">
-      <h2>Medicinali che stanno terminando</h2>
-      <DashboardTable
-        :items="currentDrugsQuantity"
-        :type="'Medicinali'"
-        :danger="'qnt'"
-        v-if="currentDrugsQuantity.length > 0"
-      />
-      <div v-else>Nessun medicinale che sta per terminare</div>
-      <h2>Medicinali in scadenza</h2>
-      <DashboardTable
-        :items="currentDrugsExpiration"
-        :type="'Medicinali'"
-        :danger="'exp'"
-        v-if="currentDrugsExpiration.length > 0"
-      />
-      <div v-else>Nessun medicinale in scadenza</div>
+  <div class="row" v-if="loaded">
+    <div class="d-flex flex-wrap border-tabs">
+      <div class="col-12 col-md-6 p-3">
+        <h2>Prodotti che stanno terminando</h2>
+        <DashboardTable
+          :items="currentProductsQuantity"
+          :type="'Prodotti'"
+          :danger="'qnt'"
+          v-if="currentProductsQuantity.length > 0"
+        />
+        <div v-else>Nessun prodotto che sta per terminare</div>
+        <h2>Prodotti in scadenza</h2>
+        <DashboardTable
+          :items="currentProductsExpiration"
+          :type="'Prodotti'"
+          :danger="'exp'"
+          v-if="currentProductsExpiration.length > 0"
+        />
+        <div v-else>Nessun prodotto che sta per scadere</div>
+      </div>
+      <div class="col-12 col-md-6 p-3">
+        <h2>Medicinali che stanno terminando</h2>
+        <DashboardTable
+          :items="currentDrugsQuantity"
+          :type="'Medicinali'"
+          :danger="'qnt'"
+          v-if="currentDrugsQuantity.length > 0"
+        />
+        <div v-else>Nessun medicinale che sta per terminare</div>
+        <h2>Medicinali in scadenza</h2>
+        <DashboardTable
+          :items="currentDrugsExpiration"
+          :type="'Medicinali'"
+          :danger="'exp'"
+          v-if="currentDrugsExpiration.length > 0"
+        />
+        <div v-else>Nessun medicinale in scadenza</div>
+      </div>
     </div>
   </div>
 </template>
@@ -118,12 +120,22 @@ const getInventory = () => {
   .nav-link.active {
     background-color: $mainColor;
     color: #fff;
-    border: 1px solid $mainColor;
+    border: 3px solid $mainColor;
   }
 
   .nav-link {
-    border: 1px solid #fff;
+    border: 3px solid #fff;
+    border-left: 3px solid $mainColor;
+    border-top: 3px solid $mainColor;
+    border-right: 3px solid $mainColor;
     color: $mainColor;
   }
+}
+
+.border-tabs {
+  border: 3px solid $mainColor;
+  border-top-right-radius: 10px;
+  width: calc(100% - 24px);
+  margin: 0px 12px;
 }
 </style>
