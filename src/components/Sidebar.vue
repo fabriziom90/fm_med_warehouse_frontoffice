@@ -44,6 +44,17 @@
             ><i class="fa-solid fa-pills me-2"></i>Medicinali</router-link
           >
         </li>
+        <li
+          :class="
+            this.$route.matched.some((route) => route.path.includes('/tasks'))
+              ? 'active'
+              : ''
+          "
+        >
+          <router-link to="/admin/tasks">
+            <i class="fa-solid fa-list-check me-2"></i>Task
+          </router-link>
+        </li>
       </ul>
     </div>
     <div class="bottom-sidebar">

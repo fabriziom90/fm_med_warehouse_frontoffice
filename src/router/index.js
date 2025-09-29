@@ -20,6 +20,9 @@ import Drugs from '../pages/drugs/Drugs.vue';
 import CreateDrug from '../pages/drugs/CreateDrug.vue';
 import EditDrug from '../pages/drugs/EditDrug.vue';
 
+// tasks components
+import Tasks from '../pages/tasks/Tasks.vue';
+
 const router = createRouter({
     history: createWebHistory(),
     routes: [
@@ -101,6 +104,17 @@ const router = createRouter({
                             name: 'editDrug',
                             component: EditDrug
                         }
+                    ]
+                },
+                {
+                    path: 'tasks',
+                    children: [
+                        {
+                            path: '',
+                            name: 'indexTask',
+                            component: Tasks
+                        },
+                        
                     ]
                 }
             ]

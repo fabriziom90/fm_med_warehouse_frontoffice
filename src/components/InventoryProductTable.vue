@@ -61,7 +61,6 @@ const filteredProducts = computed(() => {
 
   if (search.value !== "") {
     return props.inventoryProducts.filter((ip) => {
-      console.log(ip.product);
       return ip.product.name.toLowerCase().includes(search.value.toLowerCase());
     });
   } else {
