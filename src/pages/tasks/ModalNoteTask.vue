@@ -89,8 +89,13 @@ const onEdit = () => {
     <div class="dialog">
       <div class="d-flex justify-content-between align-items-center">
         <h3>{{ selectedEvent.title }}</h3>
-        <button class="btn btn-warning" @click="onEdit">
-          <i class="fas fa-edit"></i>
+        <button
+          class="btn"
+          :class="!isEdit ? 'btn-warning' : 'btn-main'"
+          @click="onEdit"
+        >
+          <i class="fas fa-edit" v-if="!isEdit"></i>
+          <span v-else>Salva</span>
         </button>
       </div>
       <div v-if="!isEdit">
@@ -104,7 +109,7 @@ const onEdit = () => {
         </p>
         <p>
           <strong>Note:</strong>
-          {{ selectedEvent.note || "Nessuna nota" }}
+          {{ selectedEvent.content || "Nessuna nota" }}
         </p>
         <p>
           <strong>Svolto: </strong>

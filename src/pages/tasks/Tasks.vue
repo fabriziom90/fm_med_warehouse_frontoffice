@@ -9,7 +9,7 @@ import "vue-cal/style";
 
 import ModalAddTask from "./ModalAddTask.vue";
 import ModalNoteTask from "./ModalNoteTask.vue";
-import Loader from "../../components/Loader.vue";
+import AlertTasks from "../../components/AlertTasks.vue";
 
 const token = localStorage.getItem("token");
 const configStore = useConfigStore();
@@ -136,8 +136,7 @@ const doneEvent = (id) => {
 };
 </script>
 <template lang="">
-  <Loader v-if="!tasks" />
-  <div class="m-3" v-else>
+  <div class="m-3">
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
@@ -146,6 +145,9 @@ const doneEvent = (id) => {
             <button class="btn btn-main" @click="openModal()">
               Aggiungi Task
             </button>
+          </div>
+          <div class="col-12">
+            <AlertTasks :tasks="tasks" />
           </div>
           <div class="col-12">
             <vue-cal
@@ -161,6 +163,8 @@ const doneEvent = (id) => {
               :events="tasks"
               :time="true"
               :time-cell-height="100"
+              :time-from="7 * 60"
+              :time-to="21 * 60"
               @event-click="onEventClick"
             >
               <template #event="props">
@@ -222,19 +226,9 @@ const doneEvent = (id) => {
   }
 }
 
-// .vuecal--default-theme.vuecal--light:is(.vuecal--sm, .vuecal--lg)
-//   .vuecal__scrollable--month-view
-//   .vuecal__cell-date {
-//   background-color: #997ab6;
-//   color: #fff;
-// }
-
-// .vuecal--default-theme.vuecal--light:is(.vuecal--sm, .vuecal--lg)
-//   .vuecal__scrollable--month-view
-//   .vuecal__cell--selected
-//   .vuecal__cell-date {
-//   background-color: #c4a1e5;
-// }
+.vuecal--default-theme {
+  height: 800px;
+}
 
 .vuecal--default-theme .vuecal__event-details {
   font-size: 16px;
