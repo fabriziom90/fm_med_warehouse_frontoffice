@@ -1,4 +1,14 @@
-<script setup></script>
+<script setup>
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
+const logout = () => {
+  localStorage.removeItem("token");
+
+  router.push("/");
+};
+</script>
 <template lang="">
   <div id="sidebar">
     <router-link to="/admin" class="text-decoration-none">
@@ -58,7 +68,7 @@
       </ul>
     </div>
     <div class="bottom-sidebar">
-      <button><i class="fas fa-user me-2"></i>Logout</button>
+      <button @click="logout"><i class="fas fa-user me-2"></i>Logout</button>
     </div>
   </div>
 </template>

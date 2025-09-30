@@ -41,7 +41,7 @@ const configStore = useConfigStore();
 
 // import default datatableOptions
 const defaultOptions = inject("datatableOptions");
-defaultOptions.paging = false;
+defaultOptions.paging = true;
 defaultOptions.columns = columns;
 defaultOptions.rowCallback = function (row, data) {
   const deleteBtn = row.querySelector("button.btn-danger");
