@@ -9,7 +9,6 @@ const today = new Date();
 const todayStr = today.toISOString().split("T")[0]; // "2025-09-28"
 const todaysTasks = computed(() => {
   return props.tasks.filter((task) => {
-    console.log(task);
     if (task.done === false) {
       const taskDate = new Date(task.start).toISOString().split("T")[0];
       return todayStr >= taskDate;
@@ -32,7 +31,6 @@ const renderTime = (date) => {
 };
 
 const renderTypeAlert = (date) => {
-  console.log(date);
   const today = new Date();
   const todayStr = today.toISOString().split("T")[0]; // "2025-09-28"
   const dateStr = date.toISOString().split("T")[0];
@@ -47,8 +45,20 @@ const renderTypeAlert = (date) => {
     <div>Hai {{ todaysTasks.length }} da compiere oggi</div>
     <div v-for="task in todaysTasks" :key="task.id">
       <div class="alert" :class="renderTypeAlert(task.start)">
-        {{ task.title }} alle ore
-        {{ renderTime(task) }}
+        <span
+          v-if="
+            new Date().toISOString().split('T')[0] >
+            task.start.toISOString().split('T')[0]
+          "
+        >
+          Il task {{ task.title }} del giorno
+          {{ task.start.toLocaleDateString("it-IT") }} non è stato completato.
+          Verifica se l'hai svolto e cambia il suo stato.
+        </span>
+        <span v-else>
+          {{ task.title }} alle ore
+          {{ renderTime(task) }}
+        </span>
       </div>
     </div>
   </div>
