@@ -2,6 +2,7 @@
 import { useRouter } from "vue-router";
 
 const router = useRouter();
+const route = useRoute();
 
 const logout = () => {
   localStorage.removeItem("token");
@@ -19,48 +20,22 @@ const logout = () => {
     </router-link>
     <div class="middle-sidebar">
       <ul class="list-unstyled">
-        <li
-          :class="
-            this.$route.matched.some((route) => route.path.includes('/rooms'))
-              ? 'active'
-              : ''
-          "
-        >
+        <li :class="route.path.includes('rooms') ? 'active' : ''">
           <router-link to="/admin/rooms"
             ><i class="fas fa-door-closed me-2"></i>Stanze</router-link
           >
         </li>
-        <li
-          :class="
-            this.$route.matched.some((route) =>
-              route.path.includes('/products')
-            )
-              ? 'active'
-              : ''
-          "
-        >
+        <li :class="route.path.includes('products') ? 'active' : ''">
           <router-link to="/admin/products"
             ><i class="fa-solid fa-stethoscope me-2"></i>Prodotti</router-link
           >
         </li>
-        <li
-          :class="
-            this.$route.matched.some((route) => route.path.includes('/drugs'))
-              ? 'active'
-              : ''
-          "
-        >
+        <li :class="route.path.includes('drugs') ? 'active' : ''">
           <router-link to="/admin/drugs"
             ><i class="fa-solid fa-pills me-2"></i>Medicinali</router-link
           >
         </li>
-        <li
-          :class="
-            this.$route.matched.some((route) => route.path.includes('/tasks'))
-              ? 'active'
-              : ''
-          "
-        >
+        <li :class="route.path.includes('tasks') ? 'active' : ''">
           <router-link to="/admin/tasks">
             <i class="fa-solid fa-list-check me-2"></i>Task
           </router-link>
