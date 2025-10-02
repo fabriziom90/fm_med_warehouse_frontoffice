@@ -23,6 +23,10 @@ import EditDrug from '../pages/drugs/EditDrug.vue';
 // tasks components
 import Tasks from '../pages/tasks/Tasks.vue';
 
+// doctors components
+import Doctors from '../pages/doctors/Doctors.vue'
+import CreateDoctor from '../pages/doctors/CreateDoctor.vue';
+
 const router = createRouter({
     history: createWebHistory(),
     routes: [
@@ -115,6 +119,21 @@ const router = createRouter({
                             component: Tasks
                         },
                         
+                    ]
+                },
+                {
+                    path: 'doctors',
+                    children: [
+                        {
+                            path: '',
+                            name: 'indexDoctors',
+                            component: Doctors
+                        },
+                        {
+                            path:'create',
+                            name: 'createDoctor',
+                            component: CreateDoctor
+                        }
                     ]
                 }
             ]
