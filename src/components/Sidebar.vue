@@ -45,6 +45,11 @@ const logout = () => {
             <i class="fa-solid fa-user-doctor me-2"></i>Dottori
           </router-link>
         </li>
+        <li :class="route.path.includes('patients') ? 'active' : ''">
+          <router-link to="/admin/patients">
+            <i class="fa-solid fa-hospital-user me-2"></i>Pazienti
+          </router-link>
+        </li>
       </ul>
     </div>
     <div class="bottom-sidebar">

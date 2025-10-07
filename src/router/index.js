@@ -26,6 +26,14 @@ import Tasks from '../pages/tasks/Tasks.vue';
 // doctors components
 import Doctors from '../pages/doctors/Doctors.vue'
 import CreateDoctor from '../pages/doctors/CreateDoctor.vue';
+import EditDoctor from "../pages/doctors/EditDoctor.vue";
+import ShowDoctor from "../pages/doctors/ShowDoctor.vue";
+
+// patients components
+import Patients from "../pages/patients/Patients.vue";
+import CreatePatient from "../pages/patients/CreatePatient.vue";
+import EditPatient from "../pages/patients/EditPatient.vue";
+import ShowPatient from "../pages/patients/ShowPatient.vue";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -133,6 +141,41 @@ const router = createRouter({
                             path:'create',
                             name: 'createDoctor',
                             component: CreateDoctor
+                        },
+                        {
+                            path: ':id/edit',
+                            name: 'editDoctor',
+                            component: EditDoctor
+                        },
+                        {
+                            path: ':id/show',
+                            name: 'showDoctor',
+                            component: ShowDoctor
+                        }
+                    ]
+                },
+                {
+                    path: 'patients',
+                    children: [
+                        {
+                            path: '',
+                            name: 'indexPatients',
+                            component: Patients
+                        },
+                        {
+                            path: ':id/',
+                            name: 'showPatient',
+                            component: ShowPatient
+                        },
+                        {
+                            path: 'create',
+                            name: 'createPatient',
+                            component: CreatePatient
+                        },
+                        {
+                            path: ':id/edit',
+                            name: 'editPatient',
+                            component: EditPatient
                         }
                     ]
                 }

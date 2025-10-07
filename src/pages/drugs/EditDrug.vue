@@ -33,7 +33,7 @@ onMounted(() => {
 const handleSubmit = async () => {
   try {
     await api
-      .patch(`${configStore.apiBaseUrl}/drugs/${drugId}/update`, form.value, {
+      .patch(`${configStore.apiBaseUrl}/drugs/${drugId}`, form.value, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -1,21 +1,19 @@
 <script setup>
 import { ref, onMounted, inject } from "vue";
-import { useConfigStore } from "../../stores/configStore";
-import { useToast } from "vue-toast-notification";
-import { router } from "../../router/index";
-import DataTable from "datatables.net-vue3";
-import Modal from "./Modal.vue";
 import api from "../../services/api";
+import { useConfigStore } from "../../stores/configStore";
+import { router } from "../../router";
+import { DataTable } from "datatables.net-vue3";
+import { useToast } from "vue-toast-notification";
+import Modal from "./Modal.vue";
 
 const configStore = useConfigStore();
 const token = localStorage.getItem("token");
 const $toast = useToast();
 
-// define variables
 const columns = [
   { title: "Nome", data: "name" },
   { title: "Cognome", data: "surname" },
-  { title: "Specializzazione", data: "specialty" },
   {
     title: "Strumenti",
     data: null,
@@ -45,52 +43,36 @@ defaultOptions.rowCallback = function (row, data) {
 
   if (deleteBtn) {
     deleteBtn.onclick = () => {
-      selectedDoctor.value = data;
+      selectedPatient.value = data;
       isModalOpen.value = true;
     };
   }
   if (editBtn) {
     editBtn.onclick = (e) => {
       e.preventDefault();
-      router.push({ name: "editDoctor", params: { id: data._id } });
+      router.push({ name: "editPatient", params: { id: data._id } });
     };
   }
   if (showBtn) {
     showBtn.onclick = (e) => {
       e.preventDefault();
-      router.push({ name: "showDoctor", params: { id: data._id } });
+      router.push({ name: "showPatient", params: { id: data._id } });
     };
   }
 };
 
-const doctors = ref([]);
-const selectedDoctor = ref(null);
+const patients = ref([]);
+const selectedPatient = ref(null);
 const isModalOpen = ref(false);
 
 onMounted(() => {
-  getDoctors();
+  getPatients();
 });
-
-const getDoctors = () => {
-  try {
-    api
-      .get(`${configStore.apiBaseUrl}/doctors`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((resp) => {
-        doctors.value = resp.data.doctors;
-      });
-  } catch (err) {
-    console.log(err);
-  }
-};
 
 const confirmDelete = async () => {
   await api
     .delete(
-      `${configStore.apiBaseUrl}/doctors/delete/${selectedDoctor.value._id}`,
+      `${configStore.apiBaseUrl}/patients/delete/${selectedPatient.value._id}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -105,7 +87,7 @@ const confirmDelete = async () => {
           duration: 3000,
         });
         closeModal();
-        await getDoctors();
+        await getPatients();
       } else {
         $toast.error(message, {
           position: "top-right",
@@ -115,35 +97,47 @@ const confirmDelete = async () => {
     });
 };
 
+const getPatients = () => {
+  try {
+    api
+      .get(`${configStore.apiBaseUrl}/patients`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((resp) => {
+        patients.value = resp.data.patients;
+      });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 function closeModal() {
   isModalOpen.value = false;
 }
 </script>
 <template lang="">
-  <div class="m-3">
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-12">
-          <div class="d-flex justify-content-between align-items-center">
-            <h2 class="fs-1">Elenco dottori</h2>
-            <router-link class="btn-main" to="/admin/doctors/create"
-              >Aggiungi dottore</router-link
-            >
-          </div>
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+          <h2>Pazienti</h2>
+          <router-link class="btn-main" to="/admin/patients/create"
+            >Aggiungi paziente</router-link
+          >
         </div>
       </div>
-      <div class="row" v-if="doctors">
-        <div class="col-12">
-          <DataTable
-            class="display table table-striped mt-3"
-            :options="defaultOptions"
-            :data="doctors"
-            v-if="doctors.length > 0"
-          >
-          </DataTable>
-          <div v-else-if="doctors.length === 0">
-            <h2>Non sono stati ancora inseriti dottori</h2>
-          </div>
+    </div>
+    <div class="row" v-if="patients">
+      <div class="col-12">
+        <DataTable
+          class="display table table-striped mt-3"
+          :options="defaultOptions"
+          :data="patients"
+          v-if="patients.length > 0"
+        >
+        </DataTable>
+        <div v-else-if="patients.length === 0">
+          <h2>Non sono stati ancora inseriti pazienti</h2>
         </div>
       </div>
     </div>

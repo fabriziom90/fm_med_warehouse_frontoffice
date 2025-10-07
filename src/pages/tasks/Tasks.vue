@@ -87,7 +87,7 @@ const onEventClick = ({ event, e }) => {
 
 const deleteEvent = (id) => {
   api
-    .delete(`${configStore.apiBaseUrl}/tasks/${id}`, {
+    .delete(`${configStore.apiBaseUrl}/tasks/delete/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
