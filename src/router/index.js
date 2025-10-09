@@ -35,6 +35,9 @@ import CreatePatient from "../pages/patients/CreatePatient.vue";
 import EditPatient from "../pages/patients/EditPatient.vue";
 import ShowPatient from "../pages/patients/ShowPatient.vue";
 
+// medical appointments components
+import CreateMedicalAppointment from "../pages/medical_appointments/CreateMedicalAppointment.vue";
+
 const router = createRouter({
     history: createWebHistory(),
     routes: [
@@ -176,6 +179,16 @@ const router = createRouter({
                             path: ':id/edit',
                             name: 'editPatient',
                             component: EditPatient
+                        }
+                    ]
+                },
+                {
+                    path: 'medical_appointments',
+                    children: [
+                        {
+                            path: 'create',
+                            name: 'createMedicalAppointment',
+                            component: CreateMedicalAppointment
                         }
                     ]
                 }

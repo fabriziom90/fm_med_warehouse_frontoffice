@@ -12,7 +12,7 @@ import Sidebar from "../components/Sidebar.vue";
 <style lang="scss" scoped>
 main {
   height: 100vh;
-  width: calc(100% - 200px);
+  width: calc(100% - 230px);
   overflow-y: auto;
 }
 </style>

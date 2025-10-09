@@ -50,6 +50,13 @@ const logout = () => {
             <i class="fa-solid fa-hospital-user me-2"></i>Pazienti
           </router-link>
         </li>
+        <li
+          :class="route.path.includes('medical_appointments') ? 'active' : ''"
+        >
+          <router-link to="/admin/medical_appointments/create">
+            <i class="fa-solid fa-calendar-check me-2"></i>Crea appuntamento
+          </router-link>
+        </li>
       </ul>
     </div>
     <div class="bottom-sidebar">
@@ -63,7 +70,7 @@ const logout = () => {
 @use "../styles/_partials/_variables.scss" as *;
 
 #sidebar {
-  width: 200px;
+  width: 230px;
   height: 100vh;
   background-color: $mainColor;
   color: #fff;
