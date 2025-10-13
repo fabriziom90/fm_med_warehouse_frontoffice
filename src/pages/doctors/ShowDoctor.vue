@@ -57,7 +57,7 @@ onMounted(() => {
     <hr />
     <div class="row">
       <TableAppointments
-        :doctorId="doctor._id"
+        :doctor="doctor"
         v-if="Object.keys(doctor).length > 0"
       />
     </div>

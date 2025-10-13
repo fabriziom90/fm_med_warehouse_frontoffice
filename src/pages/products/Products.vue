@@ -15,6 +15,7 @@ const columns = [
   {
     title: "Strumenti",
     data: null,
+    orderable: false,
     render: function (data, type, row) {
       return `
         <a href="#" data-edit-id="${row._id}" class="btn btn-warning btn-sm me-2">
@@ -43,6 +44,7 @@ const configStore = useConfigStore();
 const defaultOptions = inject("datatableOptions");
 defaultOptions.paging = true;
 defaultOptions.columns = columns;
+defaultOptions.orderable = true;
 defaultOptions.rowCallback = function (row, data) {
   const deleteBtn = row.querySelector("button.btn-danger");
   const editBtn = row.querySelector("a.btn-warning");

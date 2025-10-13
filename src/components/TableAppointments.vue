@@ -4,6 +4,8 @@ import api from "../services/api";
 import { useConfigStore } from "../stores/configStore";
 import { useToast } from "vue-toast-notification";
 import { DataTable } from "datatables.net-vue3";
+import { jsPDF } from "jspdf"; // ✅ per il PDF
+import autoTable from "jspdf-autotable"; // ✅ tabella nel PDF
 
 const columns = [
   {
@@ -109,7 +111,7 @@ const sumTotal = ref(0);
 const withHoldingTax = ref(0);
 
 const props = defineProps({
-  doctorId: String,
+  doctor: Object,
 });
 
 onMounted(() => {
@@ -119,7 +121,7 @@ onMounted(() => {
 const getMedicalAppointments = () => {
   api
     .get(
-      `${configStore.apiBaseUrl}/medical_appointments/doctor/${props.doctorId}`,
+      `${configStore.apiBaseUrl}/medical_appointments/doctor/${props.doctor._id}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -129,9 +131,172 @@ const getMedicalAppointments = () => {
     });
 };
 
+const generateTotals = () => {
+  return filteredAppointments.value.reduce(
+    (acc, curr) => {
+      acc.total += curr.total || 0;
+      acc.serviceValue += curr.serviceValue || 0;
+      acc.assignedAmount += curr.assignedAmount || 0;
+      return acc;
+    },
+    { total: 0, serviceValue: 0, assignedAmount: 0 }
+  );
+};
+
 function closeModal() {
   isModalOpen.value = false;
 }
+
+const generatePdf = () => {
+  if (!filteredAppointments.value || filteredAppointments.value.length === 0) {
+    $toast.error("Nessun dato da esportare per il mese selezionato.");
+    return;
+  }
+
+  const doc = new jsPDF({
+    orientation: "landscape",
+    unit: "pt",
+    format: "a4",
+  });
+  const title = `Riepilogo prestazioni Dott./Dott.ssa ${props.doctor.name} ${
+    props.doctor.surname
+  } - ${selectedMonth.value || ""}`;
+  doc.setFontSize(18);
+  doc.text(title, 40, 40);
+
+  // intestazione colonne - usare dataKey per oggetti in body
+  const columnsForPdf = [
+    { header: "Paziente", dataKey: "patient" },
+    { header: "Data", dataKey: "date" },
+    { header: "Fattura", dataKey: "invoiceNumber" },
+    { header: "Totale", dataKey: "total" },
+    { header: "Prestazione", dataKey: "service" },
+    { header: "Valore prestazione", dataKey: "serviceValue" },
+    { header: "% al medico", dataKey: "percentageToDoctor" },
+    { header: "Somma assegnata", dataKey: "assignedAmount" },
+  ];
+
+  // costruisco il body: array di oggetti
+  const body = filteredAppointments.value.map((appointment) => {
+    const formatMoney = (v) =>
+      (Number(v) || 0).toLocaleString("it-IT", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }) + " €";
+
+    return {
+      patient: `${appointment.patient?.name ?? ""} ${
+        appointment.patient?.surname ?? ""
+      }`.trim(),
+      date: appointment.date
+        ? new Date(appointment.date).toLocaleDateString("it-IT")
+        : "",
+      invoiceNumber: appointment.invoiceNumber ?? "",
+      total: Number(appointment.total) ? formatMoney(appointment.total) : "",
+      service: appointment.service ?? "",
+      serviceValue: Number(appointment.serviceValue)
+        ? formatMoney(appointment.serviceValue)
+        : "",
+      percentageToDoctor:
+        appointment.percentageToDoctor !== undefined &&
+        appointment.percentageToDoctor !== null
+          ? `${Number(appointment.percentageToDoctor).toFixed(2)} %`
+          : "",
+      assignedAmount: Number(appointment.assignedAmount)
+        ? formatMoney(appointment.assignedAmount)
+        : "",
+    };
+  });
+
+  // riga TOTALI (fa parte della tabella)
+  const formatMoney = (v) =>
+    (Number(v) || 0).toLocaleString("it-IT", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }) + " €";
+
+  body.push({
+    patient: "TOTALI",
+    date: "",
+    invoiceNumber: "",
+    total: formatMoney(totals.value.total),
+    service: "",
+    serviceValue: formatMoney(totals.value.serviceValue),
+    percentageToDoctor: "",
+    assignedAmount: formatMoney(totals.value.assignedAmount),
+    _summary: true,
+  });
+
+  // riga Ritenuta d'acconto
+  body.push({
+    patient: `Ritenuta d'acconto (${Number(withHoldingTax.value || 0).toFixed(
+      2
+    )})`,
+    date: "",
+    invoiceNumber: "",
+    total: "",
+    service: "",
+    serviceValue: "",
+    percentageToDoctor: "",
+    assignedAmount: formatMoney(withHoldingTax.value),
+    _summary: true,
+  });
+
+  // riga NETTO A PAGARE
+  body.push({
+    patient: "Netto a pagare",
+    date: "",
+    invoiceNumber: "",
+    total: "",
+    service: "",
+    serviceValue: "",
+    percentageToDoctor: "",
+    assignedAmount: formatMoney(netToPay.value),
+    _summary: true,
+  });
+
+  // genera la tabella PDF con stile personalizzato per le righe summary
+  autoTable(doc, {
+    head: [columnsForPdf.map((c) => c.header)],
+    // use columns/dataKeys through columns option so cells map correctly
+    columns: columnsForPdf,
+    body: body,
+    startY: 60,
+    styles: {
+      fontSize: 12,
+      cellPadding: 6,
+    },
+    headStyles: {
+      fillColor: [30, 120, 190],
+      textColor: 255,
+      fontStyle: "bold",
+    },
+    didParseCell: function (data) {
+      // data.row.raw è l'oggetto originale della riga
+      if (data.row && data.row.raw && data.row.raw._summary) {
+        data.cell.styles.fontStyle = "bold";
+        data.cell.styles.fillColor = [245, 245, 245]; // grigio chiaro
+      }
+      // se la cella è della colonna "Paziente" e contiene TOTALI, centriamo il testo
+      if (
+        data.row &&
+        data.row.raw &&
+        data.row.raw._summary &&
+        data.column.dataKey === "patient"
+      ) {
+        data.cell.styles.halign = "left";
+      }
+    },
+    // imposta margini per sicurezza
+    margin: { left: 40, right: 40, top: 40, bottom: 40 },
+    // se la tabella è lunga, jspdf-autotable la spezzetta automaticamente
+  });
+
+  const filename = `riepilogo_${props.doctor.name}_${props.doctor.surname}_${(
+    selectedMonth.value || "mese"
+  ).replace("/", "-")}.pdf`;
+  doc.save(filename);
+};
 
 const availableMonths = computed(() => {
   const monthsSet = new Map(); // Map per conservare valore + label
@@ -175,15 +340,7 @@ const filteredAppointments = computed(() => {
 });
 
 const totals = computed(() => {
-  return filteredAppointments.value.reduce(
-    (acc, curr) => {
-      acc.total += curr.total || 0;
-      acc.serviceValue += curr.serviceValue || 0;
-      acc.assignedAmount += curr.assignedAmount || 0;
-      return acc;
-    },
-    { total: 0, serviceValue: 0, assignedAmount: 0 }
-  );
+  return generateTotals();
 });
 
 const netToPay = computed(() => {
@@ -194,25 +351,36 @@ const netToPay = computed(() => {
 <template lang="">
   <div class="container">
     <div class="row">
-      <div class="col-12" v-if="props.doctorId">
+      <div class="col-12" v-if="props.doctor">
         <h2 class="m-0">Elenco prestazioni medico</h2>
-        <div class="filter-month-position">
-          <label class="form-label">Filtra per mese:</label>
-          <select
-            name="month"
-            id="month"
-            class="form-select"
-            v-model="selectedMonth"
-          >
-            <option value="">Seleziona mese per il filtraggio</option>
-            <option
-              :value="m.value"
-              :key="m.value"
-              v-for="m in availableMonths"
+        <div class="header-filtered-table">
+          <div>
+            <label class="form-label">Filtra per mese:</label>
+            <select
+              name="month"
+              id="month"
+              class="form-select"
+              v-model="selectedMonth"
             >
-              {{ m.label }}
-            </option>
-          </select>
+              <option value="">Seleziona mese per il filtraggio</option>
+              <option
+                :value="m.value"
+                :key="m.value"
+                v-for="m in availableMonths"
+              >
+                {{ m.label }}
+              </option>
+            </select>
+          </div>
+          <div>
+            <button
+              class="btn-main"
+              v-if="selectedMonth !== ''"
+              @click="generatePdf"
+            >
+              Genera PDF
+            </button>
+          </div>
         </div>
         <div class="summary my-4" v-if="selectedMonth != ''">
           <table>
@@ -309,10 +477,10 @@ td {
   }
 }
 
-.filter-month-position {
-  //   position: relative;
-  //   top: 65px;
-  //   margin-top: -40px;
+.header-filtered-table {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   select {
     width: 400px;
   }
