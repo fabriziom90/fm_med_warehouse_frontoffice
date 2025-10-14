@@ -4,6 +4,7 @@ import api from "../../services/api";
 import { useConfigStore } from "../../stores/configStore";
 import { useToast } from "vue-toast-notification";
 import { router } from "../../router/index.js";
+import { useRoute } from "vue-router";
 import FormAddDoctor from "../../components/FormAddDoctor.vue";
 import FormAddPatient from "../../components/FormAddPatient.vue";
 
@@ -11,9 +12,13 @@ const configStore = useConfigStore();
 const $toast = useToast();
 const token = localStorage.getItem("token");
 
+const route = useRoute();
+const appointmentId = route.params.id;
+
 const doctors = ref([]);
 const patients = ref([]);
 const userEditedAssigned = ref(false);
+
 const form = ref({
   doctor: "",
   patient: "",
@@ -30,6 +35,7 @@ const form = ref({
 onMounted(() => {
   getDoctors();
   getPatients();
+  getMedicalAppointment();
 });
 
 watch(
@@ -48,9 +54,13 @@ watch(
 const handleSubmit = () => {
   try {
     api
-      .post(`${configStore.apiBaseUrl}/medical_appointments`, form.value, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      .put(
+        `${configStore.apiBaseUrl}/medical_appointments/${appointmentId}`,
+        form.value,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      )
       .then((resp) => {
         if (resp.data.result) {
           $toast.success(resp.data.message, {
@@ -110,12 +120,50 @@ const getPatients = () => {
       patients.value = resp.data.patients;
     });
 };
+
+const getMedicalAppointment = () => {
+  api
+    .get(`${configStore.apiBaseUrl}/medical_appointments/${appointmentId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then((resp) => {
+      //   const { assignedAmount, date, doctor, invoiceNumber, patient, percentageToDoctor, service, serviceValue,​ total } = resp.data.medicalAppointment;
+      const {
+        assignedAmount,
+        date,
+        doctor,
+        invoiceNumber,
+        patient,
+        percentageToDoctor,
+        service,
+        serviceValue,
+        total,
+      } = resp.data.medicalAppointment;
+
+      const dateApp = new Date(date);
+      console.log(dateApp);
+
+      const localeDate = dateApp.toISOString().split("T")[0];
+
+      form.value = {
+        doctor,
+        patient,
+        date: localeDate,
+        invoiceNumber,
+        service,
+        total,
+        serviceValue,
+        percentageToDoctor,
+        assignedAmount,
+      };
+    });
+};
 </script>
 <template lang="">
   <div class="container mt-4">
     <div class="row">
       <div class="col-12">
-        <h2>Aggiungi appuntamento medico</h2>
+        <h2>Modifica appuntamento medico</h2>
       </div>
       <div class="col-12">
         <form @submit.prevent="handleSubmit" class="mt-4">

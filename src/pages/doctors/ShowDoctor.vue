@@ -62,5 +62,6 @@ onMounted(() => {
       />
     </div>
   </div>
+  <Modal v-if="isModalOpen" />
 </template>
 <style lang=""></style>

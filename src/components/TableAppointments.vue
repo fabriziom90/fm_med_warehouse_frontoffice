@@ -4,8 +4,10 @@ import api from "../services/api";
 import { useConfigStore } from "../stores/configStore";
 import { useToast } from "vue-toast-notification";
 import { DataTable } from "datatables.net-vue3";
-import { jsPDF } from "jspdf"; // ✅ per il PDF
-import autoTable from "jspdf-autotable"; // ✅ tabella nel PDF
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
+import { router } from "../router";
+import Modal from "../pages/medical_appointments/Modal.vue";
 
 const columns = [
   {
@@ -54,9 +56,6 @@ const columns = [
     data: null,
     render: function (data, type, row) {
       return `
-        <a href="#" data-show-id="${row._id}" class="btn btn-primary btn-sm me-1">
-          <i class="fas fa-eye"></i>
-        </a>
         <a href="#" data-edit-id="${row._id}" class="btn btn-warning btn-sm me-1">
           <i class="fas fa-edit"></i>
         </a>
@@ -75,7 +74,6 @@ defaultOptions.orderable = true;
 defaultOptions.rowCallback = function (row, data) {
   const deleteBtn = row.querySelector("button.btn-danger");
   const editBtn = row.querySelector("a.btn-warning");
-  const showBtn = row.querySelector("a.btn-primary");
 
   if (deleteBtn) {
     deleteBtn.onclick = () => {
@@ -87,12 +85,6 @@ defaultOptions.rowCallback = function (row, data) {
     editBtn.onclick = (e) => {
       e.preventDefault();
       router.push({ name: "editMedicalAppointment", params: { id: data._id } });
-    };
-  }
-  if (showBtn) {
-    showBtn.onclick = (e) => {
-      e.preventDefault();
-      router.push({ name: "showMedicalAppointment", params: { id: data._id } });
     };
   }
 };
@@ -142,10 +134,6 @@ const generateTotals = () => {
     { total: 0, serviceValue: 0, assignedAmount: 0 }
   );
 };
-
-function closeModal() {
-  isModalOpen.value = false;
-}
 
 const generatePdf = () => {
   if (!filteredAppointments.value || filteredAppointments.value.length === 0) {
@@ -347,6 +335,38 @@ const netToPay = computed(() => {
   const total = totals.value.assignedAmount || 0;
   return total - withHoldingTax.value;
 });
+
+const confirmDelete = async () => {
+  await api
+    .delete(
+      `${configStore.apiBaseUrl}/medical_appointments/delete/${selectedMedicalAppointment.value._id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    .then(async (resp) => {
+      const { result, message } = resp.data;
+      if (result) {
+        $toast.success(message, {
+          position: "top-right",
+          duration: 3000,
+        });
+        closeModal();
+        await getMedicalAppointments();
+      } else {
+        $toast.error(message, {
+          position: "top-right",
+          duration: 3000,
+        });
+      }
+    });
+};
+
+function closeModal() {
+  isModalOpen.value = false;
+}
 </script>
 <template lang="">
   <div class="container">
@@ -437,7 +457,8 @@ const netToPay = computed(() => {
                   <input
                     type="number"
                     min="0"
-                    placeholder="Ritenuta d'acconto in €"
+                    placeholder="Ritenuta d'acconto in
+  €"
                     class="form-control"
                     v-model="withHoldingTax"
                   />
@@ -464,6 +485,11 @@ const netToPay = computed(() => {
       </div>
     </div>
   </div>
+  <Modal
+    v-if="isModalOpen"
+    @close="closeModal"
+    @handleConfirmDelete="confirmDelete"
+  />
 </template>
 <style lang="scss" scoped>
 th,
