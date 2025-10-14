@@ -35,11 +35,6 @@ const logout = () => {
             ><i class="fa-solid fa-pills me-2"></i>Medicinali</router-link
           >
         </li>
-        <li :class="route.path.includes('tasks') ? 'active' : ''">
-          <router-link to="/admin/tasks">
-            <i class="fa-solid fa-list-check me-2"></i>Task
-          </router-link>
-        </li>
         <li :class="route.path.includes('doctors') ? 'active' : ''">
           <router-link to="/admin/doctors">
             <i class="fa-solid fa-user-doctor me-2"></i>Dottori
@@ -55,6 +50,11 @@ const logout = () => {
         >
           <router-link to="/admin/medical_appointments/create">
             <i class="fa-solid fa-calendar-check me-2"></i>Crea appuntamento
+          </router-link>
+        </li>
+        <li :class="route.path.includes('tasks') ? 'active' : ''">
+          <router-link to="/admin/tasks">
+            <i class="fa-solid fa-list-check me-2"></i>Task
           </router-link>
         </li>
       </ul>

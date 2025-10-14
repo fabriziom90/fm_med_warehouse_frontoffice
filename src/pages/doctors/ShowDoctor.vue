@@ -57,11 +57,11 @@ onMounted(() => {
     <hr />
     <div class="row">
       <TableAppointments
-        :doctor="doctor"
+        :people="doctor"
+        :type="1"
         v-if="Object.keys(doctor).length > 0"
       />
     </div>
   </div>
-  <Modal v-if="isModalOpen" />
 </template>
 <style lang=""></style>

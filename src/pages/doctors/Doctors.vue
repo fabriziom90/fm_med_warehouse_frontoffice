@@ -129,6 +129,11 @@ function closeModal() {
             <router-link class="btn-main" to="/admin/doctors/create"
               >Aggiungi dottore</router-link
             >
+            <router-link
+              class="btn-main"
+              to="/admin/medical_appointments/create"
+              >Crea appuntamento medico</router-link
+            >
           </div>
         </div>
       </div>

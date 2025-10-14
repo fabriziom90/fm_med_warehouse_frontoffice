@@ -103,7 +103,8 @@ const sumTotal = ref(0);
 const withHoldingTax = ref(0);
 
 const props = defineProps({
-  doctor: Object,
+  people: Object,
+  type: Number,
 });
 
 onMounted(() => {
@@ -111,13 +112,20 @@ onMounted(() => {
 });
 
 const getMedicalAppointments = () => {
+  let url = `${configStore.apiBaseUrl}/medical_appointments/`;
+
+  if (props.type === 1) {
+    url += "doctor/";
+  } else {
+    url += "patient/";
+  }
+
+  url += props.people._id;
+  console.log(url);
   api
-    .get(
-      `${configStore.apiBaseUrl}/medical_appointments/doctor/${props.doctor._id}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    )
+    .get(url, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
     .then((resp) => {
       medicalAppointments.value = resp.data.medicalAppointments;
     });
@@ -371,7 +379,7 @@ function closeModal() {
 <template lang="">
   <div class="container">
     <div class="row">
-      <div class="col-12" v-if="props.doctor">
+      <div class="col-12" v-if="props.people">
         <h2 class="m-0">Elenco prestazioni medico</h2>
         <div class="header-filtered-table">
           <div>

@@ -3,6 +3,7 @@ import { ref, onMounted } from "vue";
 import api from "../../services/api";
 import { useConfigStore } from "../../stores/configStore";
 import { useRoute } from "vue-router";
+import TableAppointments from "../../components/TableAppointments.vue";
 
 const token = localStorage.getItem("token");
 const configStore = useConfigStore();
@@ -30,6 +31,9 @@ onMounted(() => {
           <router-link to="/admin/patients" class="btn-main"
             >Visualizza pazienti</router-link
           >
+          <router-link class="btn-main" to="/admin/medical_appointments/create">
+            Crea appuntamento
+          </router-link>
         </div>
       </div>
       <div class="col-12 col-md-4">
@@ -40,6 +44,14 @@ onMounted(() => {
         <div><strong>Cognome:</strong></div>
         <div>{{ patient.surname }}</div>
       </div>
+    </div>
+    <hr />
+    <div class="row">
+      <TableAppointments
+        :people="patient"
+        :type="2"
+        v-if="Object.keys(patient).length > 0"
+      />
     </div>
   </div>
 </template>
