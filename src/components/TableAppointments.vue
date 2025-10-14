@@ -288,7 +288,7 @@ const generatePdf = () => {
     // se la tabella è lunga, jspdf-autotable la spezzetta automaticamente
   });
 
-  const filename = `riepilogo_${props.doctor.name}_${props.doctor.surname}_${(
+  const filename = `riepilogo_${props.people.name}_${props.people.surname}_${(
     selectedMonth.value || "mese"
   ).replace("/", "-")}.pdf`;
   doc.save(filename);
