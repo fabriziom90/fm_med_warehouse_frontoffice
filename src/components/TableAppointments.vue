@@ -154,8 +154,8 @@ const generatePdf = () => {
     unit: "pt",
     format: "a4",
   });
-  const title = `Riepilogo prestazioni Dott./Dott.ssa ${props.doctor.name} ${
-    props.doctor.surname
+  const title = `Riepilogo prestazioni Dott./Dott.ssa ${props.people.name} ${
+    props.people.surname
   } - ${selectedMonth.value || ""}`;
   doc.setFontSize(18);
   doc.text(title, 40, 40);
