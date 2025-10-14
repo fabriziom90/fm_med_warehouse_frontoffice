@@ -28,12 +28,17 @@ onMounted(() => {
       <div class="col-12">
         <div class="d-flex justify-content-between align-items-center">
           <h2>Dettaglio paziente</h2>
-          <router-link to="/admin/patients" class="btn-main"
-            >Visualizza pazienti</router-link
-          >
-          <router-link class="btn-main" to="/admin/medical_appointments/create">
-            Crea appuntamento
-          </router-link>
+          <div>
+            <router-link to="/admin/patients" class="btn-main"
+              >Visualizza pazienti</router-link
+            >
+            <router-link
+              class="btn-main"
+              to="/admin/medical_appointments/create"
+            >
+              Crea appuntamento
+            </router-link>
+          </div>
         </div>
       </div>
       <div class="col-12 col-md-4">
