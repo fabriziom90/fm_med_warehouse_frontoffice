@@ -29,7 +29,7 @@ onMounted(() => {
         <div class="d-flex justify-content-between align-items-center">
           <h2>Dettaglio paziente</h2>
           <div>
-            <router-link to="/admin/patients" class="btn-main"
+            <router-link to="/admin/patients" class="btn-main me-2"
               >Visualizza pazienti</router-link
             >
             <router-link

@@ -127,7 +127,7 @@ function closeModal() {
           <div class="d-flex justify-content-between align-items-center">
             <h2 class="fs-1">Elenco dottori</h2>
             <div>
-              <router-link class="btn-main" to="/admin/doctors/create"
+              <router-link class="btn-main me-2" to="/admin/doctors/create"
                 >Aggiungi dottore</router-link
               >
               <router-link
