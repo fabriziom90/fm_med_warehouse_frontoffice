@@ -1,13 +1,20 @@
 <script setup>
+import { ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 
 const router = useRouter();
 const route = useRoute();
+const openDropdown = ref(null);
 
 const logout = () => {
   localStorage.removeItem("token");
 
   router.push("/");
+};
+
+// Stato per controllare l'apertura dei dropdown
+const toggleDropdown = (name) => {
+  openDropdown.value = openDropdown.value === name ? null : name;
 };
 </script>
 <template lang="">
@@ -20,30 +27,89 @@ const logout = () => {
     </router-link>
     <div class="middle-sidebar">
       <ul class="list-unstyled">
-        <li :class="route.path.includes('rooms') ? 'active' : ''">
-          <router-link to="/admin/rooms"
-            ><i class="fas fa-door-closed me-2"></i>Stanze</router-link
+        <li
+          :class="
+            route.path.includes('rooms') ||
+            route.path.includes('products') ||
+            route.path.includes('drugs')
+              ? 'active'
+              : ''
+          "
+        >
+          <a
+            href="#"
+            class="d-flex justify-content-between align-items-center"
+            @click.prevent="toggleDropdown('warehouse')"
           >
-        </li>
-        <li :class="route.path.includes('products') ? 'active' : ''">
-          <router-link to="/admin/products"
-            ><i class="fa-solid fa-stethoscope me-2"></i>Prodotti</router-link
+            <span><i class="fa-solid fa-boxes-stacked me-2"></i>Magazzino</span>
+            <i
+              class="fa-solid"
+              :class="
+                openDropdown === 'warehouse'
+                  ? 'fa-chevron-up'
+                  : 'fa-chevron-down'
+              "
+            ></i>
+          </a>
+          <ul
+            v-if="openDropdown === 'warehouse'"
+            class="list-unstyled ps-3 mt-2"
           >
+            <li>
+              <router-link to="/admin/rooms"
+                ><i class="fas fa-door-closed me-2"></i>Stanze</router-link
+              >
+            </li>
+            <li>
+              <router-link to="/admin/products"
+                ><i class="fa-solid fa-stethoscope me-2"></i
+                >Prodotti</router-link
+              >
+            </li>
+            <li>
+              <router-link to="/admin/drugs"
+                ><i class="fa-solid fa-pills me-2"></i>Medicinali</router-link
+              >
+            </li>
+          </ul>
         </li>
-        <li :class="route.path.includes('drugs') ? 'active' : ''">
-          <router-link to="/admin/drugs"
-            ><i class="fa-solid fa-pills me-2"></i>Medicinali</router-link
+
+        <!-- 🧑‍⚕️ Dropdown Personale Medico -->
+        <li
+          :class="
+            route.path.includes('doctors') || route.path.includes('patients')
+              ? 'active'
+              : ''
+          "
+        >
+          <a
+            href="#"
+            class="d-flex justify-content-between align-items-center"
+            @click.prevent="toggleDropdown('staff')"
           >
-        </li>
-        <li :class="route.path.includes('doctors') ? 'active' : ''">
-          <router-link to="/admin/doctors">
-            <i class="fa-solid fa-user-doctor me-2"></i>Dottori
-          </router-link>
-        </li>
-        <li :class="route.path.includes('patients') ? 'active' : ''">
-          <router-link to="/admin/patients">
-            <i class="fa-solid fa-hospital-user me-2"></i>Pazienti
-          </router-link>
+            <span
+              ><i class="fa-solid fa-user-doctor me-2"></i>Personale
+              medico</span
+            >
+            <i
+              class="fa-solid"
+              :class="
+                openDropdown === 'staff' ? 'fa-chevron-up' : 'fa-chevron-down'
+              "
+            ></i>
+          </a>
+          <ul v-if="openDropdown === 'staff'" class="list-unstyled ps-3 mt-2">
+            <li>
+              <router-link to="/admin/doctors">
+                <i class="fa-solid fa-user-doctor me-2"></i>Dottori
+              </router-link>
+            </li>
+            <li>
+              <router-link to="/admin/patients">
+                <i class="fa-solid fa-hospital-user me-2"></i>Pazienti
+              </router-link>
+            </li>
+          </ul>
         </li>
         <li
           :class="route.path.includes('medical_appointments') ? 'active' : ''"
@@ -94,8 +160,9 @@ const logout = () => {
 
 .middle-sidebar {
   height: calc(100vh - 160px);
+
   li {
-    padding: 20px 0px 20px 20px;
+    padding: 20px 10px 20px 20px;
     transition: 0.3s;
     &:hover {
       @include sidebarItems;
@@ -111,6 +178,13 @@ const logout = () => {
 
   li.active {
     @include sidebarItems;
+
+    // &:hover {
+    //   background-color: $mainColor;
+    //   a {
+    //     color: #fff;
+    //   }
+    // }
   }
 }
 

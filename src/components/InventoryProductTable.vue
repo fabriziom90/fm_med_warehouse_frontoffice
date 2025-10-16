@@ -6,6 +6,7 @@ import { useRoute } from "vue-router";
 import { useConfigStore } from "../stores/configStore.js";
 
 import Modal from "./Modal.vue";
+import Multiselect from "@vueform/multiselect";
 
 const props = defineProps({
   inventoryProducts: Array,
@@ -255,16 +256,19 @@ const checkExpirationDate = (day) => {
         <form @submit.prevent="handleSubmit" class="bg-main p-4">
           <div class="row gy-3 mt-4">
             <div class="col-12 col-md-4">
-              <select class="form-select" v-model="form.product">
-                <option value="">Seleziona prodotto</option>
-                <option
-                  v-for="product in products"
-                  :key="product._id"
-                  :value="product._id"
-                >
-                  {{ product.name }}
-                </option>
-              </select>
+              <Multiselect
+                v-model="form.product"
+                :options="
+                  products.map((p) => ({
+                    label: p.name,
+                    value: p._id,
+                  }))
+                "
+                placeholder="Cerca..."
+                noOptionsText="Nessun risultato trovato"
+                searchable
+                clearable
+              />
             </div>
             <div class="col-12 col-md-4">
               <input

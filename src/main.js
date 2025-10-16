@@ -9,7 +9,9 @@ import datatableOptions from './plugins/datatableOptions';
 import DataTable from "datatables.net-vue3";
 import DataTablesCore from "datatables.net-bs5";
 import "datatables.net-select-dt";
-import 'datatables.net-bs5/css/dataTables.bootstrap5.css'
+import 'datatables.net-bs5/css/dataTables.bootstrap5.css';
+import '@vueform/multiselect/themes/default.css';
+
 
 import { createPinia } from 'pinia'
 

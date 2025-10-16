@@ -8,6 +8,7 @@ import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { router } from "../router";
 import Modal from "../pages/medical_appointments/Modal.vue";
+import Multiselect from "@vueform/multiselect";
 
 const columns = [
   {
@@ -382,23 +383,22 @@ function closeModal() {
       <div class="col-12" v-if="props.people">
         <h2 class="m-0">Elenco prestazioni medico</h2>
         <div class="header-filtered-table">
-          <div>
+          <div class="w-50">
             <label class="form-label">Filtra per mese:</label>
-            <select
-              name="month"
-              id="month"
-              class="form-select"
+            <Multiselect
+              class="w-100"
               v-model="selectedMonth"
-            >
-              <option value="">Seleziona mese per il filtraggio</option>
-              <option
-                :value="m.value"
-                :key="m.value"
-                v-for="m in availableMonths"
-              >
-                {{ m.label }}
-              </option>
-            </select>
+              :options="
+                availableMonths.map((m) => ({
+                  label: m.label,
+                  value: m.value,
+                }))
+              "
+              placeholder="Filtra per mese"
+              noOptionsText="Nessun risultato trovato"
+              searchable
+              clearable
+            />
           </div>
           <div>
             <button
@@ -514,7 +514,7 @@ td {
 .header-filtered-table {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
   select {
     width: 400px;
   }
