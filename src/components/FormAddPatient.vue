@@ -55,17 +55,6 @@ const handleSubmit = async () => {
   <form @submit.prevent="handleSubmit">
     <div class="row gy-4">
       <div class="col-6">
-        <label class="form-label">Nome</label>
-        <input
-          type="text"
-          class="form-control"
-          placeholder="Nome"
-          name="name"
-          id="name"
-          v-model="form.name"
-        />
-      </div>
-      <div class="col-6">
         <label class="form-label">Cognome</label>
         <input
           type="text"
@@ -74,6 +63,17 @@ const handleSubmit = async () => {
           name="surname"
           id="surname"
           v-model="form.surname"
+        />
+      </div>
+      <div class="col-6">
+        <label class="form-label">Nome</label>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Nome"
+          name="name"
+          id="name"
+          v-model="form.name"
         />
       </div>
       <div class="col-12">
