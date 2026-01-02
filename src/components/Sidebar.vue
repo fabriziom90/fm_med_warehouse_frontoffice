@@ -118,6 +118,11 @@ const toggleDropdown = (name) => {
             <i class="fa-solid fa-calendar-check me-2"></i>Crea appuntamento
           </router-link>
         </li>
+        <li :class="route.path.includes('time_entries') ? 'active' : ''">
+          <router-link to="/admin/time_entries">
+            <i class="fa-solid fa-clock me-2"></i>Orari svolti
+          </router-link>
+        </li>
         <li :class="route.path.includes('tasks') ? 'active' : ''">
           <router-link to="/admin/tasks">
             <i class="fa-solid fa-list-check me-2"></i>Task

@@ -39,6 +39,10 @@ import ShowPatient from "../pages/patients/ShowPatient.vue";
 import CreateMedicalAppointment from "../pages/medical_appointments/CreateMedicalAppointment.vue";
 import EditMedicalAppointment from "../pages/medical_appointments/EditMedicalAppointment.vue";
 
+// time entries components
+import TimeEntries from "../pages/time_entries/TimeEntries.vue";
+
+
 const router = createRouter({
     history: createWebHistory(),
     routes: [
@@ -195,6 +199,16 @@ const router = createRouter({
                             path: ':id/edit',
                             name: 'editMedicalAppointment',
                             component: EditMedicalAppointment
+                        }
+                    ]
+                },
+                {
+                    path: 'time_entries',
+                    children: [
+                        {
+                            path: "",
+                            name: "timeEntries",
+                            component: TimeEntries
                         }
                     ]
                 }
