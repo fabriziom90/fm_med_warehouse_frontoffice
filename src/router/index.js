@@ -30,10 +30,10 @@ import EditDoctor from "../pages/doctors/EditDoctor.vue";
 import ShowDoctor from "../pages/doctors/ShowDoctor.vue";
 
 // patients components
-import Patients from "../pages/patients/Patients.vue";
-import CreatePatient from "../pages/patients/CreatePatient.vue";
-import EditPatient from "../pages/patients/EditPatient.vue";
-import ShowPatient from "../pages/patients/ShowPatient.vue";
+import Services from "../pages/services/Services.vue";
+import CreateService from "../pages/services/CreateService.vue";
+import EditService from "../pages/services/EditService.vue";
+// import ShowService from "../pages/services/ShowService.vue";
 
 // medical appointments components
 import CreateMedicalAppointment from "../pages/medical_appointments/CreateMedicalAppointment.vue";
@@ -163,27 +163,27 @@ const router = createRouter({
                     ]
                 },
                 {
-                    path: 'patients',
+                    path: 'services',
                     children: [
                         {
                             path: '',
-                            name: 'indexPatients',
-                            component: Patients
+                            name: 'indexServices',
+                            component: Services
                         },
-                        {
-                            path: ':id/',
-                            name: 'showPatient',
-                            component: ShowPatient
-                        },
+                        // {
+                        //     path: ':id/',
+                        //     name: 'showService',
+                        //     component: ShowService
+                        // },
                         {
                             path: 'create',
-                            name: 'createPatient',
-                            component: CreatePatient
+                            name: 'createService',
+                            component: CreateService
                         },
                         {
                             path: ':id/edit',
-                            name: 'editPatient',
-                            component: EditPatient
+                            name: 'editService',
+                            component: EditService
                         }
                     ]
                 },

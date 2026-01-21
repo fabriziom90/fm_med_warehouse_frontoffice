@@ -77,7 +77,7 @@ const toggleDropdown = (name) => {
         <!-- 🧑‍⚕️ Dropdown Personale Medico -->
         <li
           :class="
-            route.path.includes('doctors') || route.path.includes('patients')
+            route.path.includes('doctors') || route.path.includes('services')
               ? 'active'
               : ''
           "
@@ -105,8 +105,8 @@ const toggleDropdown = (name) => {
               </router-link>
             </li>
             <li>
-              <router-link to="/admin/patients">
-                <i class="fa-solid fa-hospital-user me-2"></i>Pazienti
+              <router-link to="/admin/services">
+                <i class="fa-solid fa-hand-holding-medical me-2"></i>Prestazioni
               </router-link>
             </li>
           </ul>

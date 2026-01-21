@@ -1,7 +1,7 @@
 <script setup>
-import api from "../services/api";
+import api from "../services/api.js";
 import { ref, defineEmits } from "vue";
-import { useConfigStore } from "../stores/configStore";
+import { useConfigStore } from "../stores/configStore.js";
 import { useToast } from "vue-toast-notification";
 import { router } from "../router/index.js";
 
@@ -9,22 +9,20 @@ const props = defineProps({
   refresh: Boolean,
 });
 
-const emit = defineEmits(["setDoctorSelect"]);
+const emit = defineEmits(["setServiceSelect"]);
 
-const configStore = useConfigStore();
 const token = localStorage.getItem("token");
+const configStore = useConfigStore();
 const $toast = useToast();
 
 const form = ref({
   name: "",
-  surname: "",
-  specialty: "",
 });
 
-const handleSubmit = async (req, res) => {
+const handleSubmit = async () => {
   try {
     await api
-      .post(`${configStore.apiBaseUrl}/doctors`, form.value, {
+      .post(`${configStore.apiBaseUrl}/services`, form.value, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((resp) => {
@@ -33,13 +31,12 @@ const handleSubmit = async (req, res) => {
             position: "top-right",
             duration: 1500,
           });
-
           if (props.refresh) {
             setTimeout(() => {
-              router.push({ name: "indexDoctors" });
+              router.push({ name: "indexServices" });
             }, 1500);
           } else {
-            emit("setDoctorSelect", resp.data.doctor);
+            emit("setServiceSelect", resp.data.service);
           }
         } else {
           $toast.error(resp.data.message, {
@@ -49,28 +46,14 @@ const handleSubmit = async (req, res) => {
         }
       });
   } catch (err) {
-    $toast.error(err.message, {
-      position: "top-right",
-      duration: 3000,
-    });
+    console.log(err);
   }
 };
 </script>
 <template lang="">
   <form @submit.prevent="handleSubmit">
     <div class="row gy-4">
-      <div class="col-4">
-        <label class="form-label">Cognome</label>
-        <input
-          type="text"
-          class="form-control"
-          placeholder="Cognome"
-          name="surname"
-          id="surname"
-          v-model="form.surname"
-        />
-      </div>
-      <div class="col-4">
+      <div class="col-6">
         <label class="form-label">Nome</label>
         <input
           type="text"
@@ -81,19 +64,8 @@ const handleSubmit = async (req, res) => {
           v-model="form.name"
         />
       </div>
-      <div class="col-4">
-        <label class="form-label">Specializzazione</label>
-        <input
-          type="text"
-          class="form-control"
-          placeholder="Specializzazione"
-          name="specialty"
-          id="specialty"
-          v-model="form.specialty"
-        />
-      </div>
       <div class="col-12">
-        <button :class="props.refresh ? 'btn-main' : 'btn-white'" type="submit">
+        <button type="submit" :class="props.refresh ? 'btn-main' : 'btn-white'">
           Salva
         </button>
       </div>

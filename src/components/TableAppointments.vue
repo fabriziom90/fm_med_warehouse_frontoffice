@@ -12,8 +12,8 @@ import Multiselect from "@vueform/multiselect";
 
 const columns = [
   {
-    title: "Paziente",
-    data: "patient",
+    title: "Prestazione",
+    data: "service",
     render: (data) => {
       if (!data) return "-";
       return `${data.name ?? ""} ${data.surname ?? ""}`.trim();
@@ -27,7 +27,6 @@ const columns = [
       return dateObj.toLocaleDateString();
     },
   },
-  { title: "Fattura", data: "invoiceNumber" },
   {
     title: "Totale",
     data: "total",
@@ -35,7 +34,6 @@ const columns = [
       return data + "€";
     },
   },
-  { title: "Service", data: "service" },
   {
     title: "Valore prestazione",
     data: "serviceValue",
@@ -118,7 +116,7 @@ const getMedicalAppointments = () => {
   if (props.type === 1) {
     url += "doctor/";
   } else {
-    url += "patient/";
+    url += "service/";
   }
 
   url += props.people._id;
@@ -163,11 +161,9 @@ const generatePdf = () => {
 
   // intestazione colonne - usare dataKey per oggetti in body
   const columnsForPdf = [
-    { header: "Paziente", dataKey: "patient" },
-    { header: "Data", dataKey: "date" },
-    { header: "Fattura", dataKey: "invoiceNumber" },
-    { header: "Totale", dataKey: "total" },
     { header: "Prestazione", dataKey: "service" },
+    { header: "Data", dataKey: "date" },
+    { header: "Totale", dataKey: "total" },
     { header: "Valore prestazione", dataKey: "serviceValue" },
     { header: "% al medico", dataKey: "percentageToDoctor" },
     { header: "Somma assegnata", dataKey: "assignedAmount" },
@@ -182,15 +178,11 @@ const generatePdf = () => {
       }) + " €";
 
     return {
-      patient: `${appointment.patient?.name ?? ""} ${
-        appointment.patient?.surname ?? ""
-      }`.trim(),
+      service: appointment.service.name ?? "",
       date: appointment.date
         ? new Date(appointment.date).toLocaleDateString("it-IT")
         : "",
-      invoiceNumber: appointment.invoiceNumber ?? "",
       total: Number(appointment.total) ? formatMoney(appointment.total) : "",
-      service: appointment.service ?? "",
       serviceValue: Number(appointment.serviceValue)
         ? formatMoney(appointment.serviceValue)
         : "",
@@ -215,7 +207,6 @@ const generatePdf = () => {
   body.push({
     patient: "TOTALI",
     date: "",
-    invoiceNumber: "",
     total: formatMoney(totals.value.total),
     service: "",
     serviceValue: formatMoney(totals.value.serviceValue),
@@ -230,7 +221,6 @@ const generatePdf = () => {
       2
     )})`,
     date: "",
-    invoiceNumber: "",
     total: "",
     service: "",
     serviceValue: "",
@@ -243,7 +233,6 @@ const generatePdf = () => {
   body.push({
     patient: "Netto a pagare",
     date: "",
-    invoiceNumber: "",
     total: "",
     service: "",
     serviceValue: "",
@@ -279,7 +268,7 @@ const generatePdf = () => {
         data.row &&
         data.row.raw &&
         data.row.raw._summary &&
-        data.column.dataKey === "patient"
+        data.column.dataKey === "service"
       ) {
         data.cell.styles.halign = "left";
       }
@@ -414,11 +403,9 @@ function closeModal() {
           <table>
             <thead class="bg-main text-white">
               <tr>
-                <th>Paziente</th>
-                <th>Data</th>
-                <th>Fattura</th>
-                <th>Totale</th>
                 <th>Prestazione</th>
+                <th>Data</th>
+                <th>Totale</th>
                 <th>Valore<br />Prestazione</th>
                 <th>% assegnata <br />al medico</th>
                 <th>Somma <br />assegnata</th>
@@ -430,19 +417,13 @@ function closeModal() {
                 :key="appointment._id"
               >
                 <td>
-                  {{ appointment.patient.name }}
-                  {{ appointment.patient.surname }}
+                  {{ appointment.service.name }}
                 </td>
                 <td>
                   {{ new Date(appointment.date).toLocaleDateString("it-IT") }}
                 </td>
-                <td>
-                  {{ appointment.invoiceNumber }}
-                </td>
                 <td>{{ appointment.total }}€</td>
-                <td>
-                  {{ appointment.service }}
-                </td>
+                
                 <td>{{ appointment.serviceValue }}€</td>
                 <td>
                   {{ appointment.percentageToDoctor }}

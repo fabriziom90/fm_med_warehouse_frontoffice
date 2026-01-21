@@ -6,7 +6,7 @@ import { useToast } from "vue-toast-notification";
 import { router } from "../../router/index.js";
 import { useRoute } from "vue-router";
 import FormAddDoctor from "../../components/FormAddDoctor.vue";
-import FormAddPatient from "../../components/FormAddPatient.vue";
+import FormAddService from "../../components/FormAddService.vue";
 
 const configStore = useConfigStore();
 const $toast = useToast();
@@ -16,16 +16,13 @@ const route = useRoute();
 const appointmentId = route.params.id;
 
 const doctors = ref([]);
-const patients = ref([]);
+const services = ref([]);
 const userEditedAssigned = ref(false);
 
 const form = ref({
   doctor: "",
-  patient: "",
-  date: "",
-  invoiceNumber: "",
-  invoiceNumber: "",
   service: "",
+  date: "",
   total: "",
   serviceValue: "",
   percentageToDoctor: "",
@@ -34,7 +31,7 @@ const form = ref({
 
 onMounted(() => {
   getDoctors();
-  getPatients();
+  getServices();
   getMedicalAppointment();
 });
 
@@ -96,9 +93,9 @@ const setDoctor = (doc) => {
   form.value.doctor = doc._id;
 };
 
-const setPatient = (pat) => {
-  getPatients();
-  form.value.patient = pat._id;
+const setService = (pat) => {
+  getServices();
+  form.value.service = pat._id;
 };
 
 const getDoctors = () => {
@@ -111,13 +108,13 @@ const getDoctors = () => {
     });
 };
 
-const getPatients = () => {
+const getServices = () => {
   api
-    .get(`${configStore.apiBaseUrl}/patients`, {
+    .get(`${configStore.apiBaseUrl}/services`, {
       headers: { Authorization: `Bearer ${token}` },
     })
     .then((resp) => {
-      patients.value = resp.data.patients;
+      services.value = resp.data.services;
     });
 };
 
@@ -127,16 +124,12 @@ const getMedicalAppointment = () => {
       headers: { Authorization: `Bearer ${token}` },
     })
     .then((resp) => {
-      //   const { assignedAmount, date, doctor, invoiceNumber, patient, percentageToDoctor, service, serviceValue,​ total } = resp.data.medicalAppointment;
       const {
         assignedAmount,
         date,
         doctor,
         invoiceNumber,
-        patient,
         percentageToDoctor,
-        service,
-        serviceValue,
         total,
       } = resp.data.medicalAppointment;
 
@@ -147,12 +140,10 @@ const getMedicalAppointment = () => {
 
       form.value = {
         doctor,
-        patient,
+        service,
         date: localeDate,
         invoiceNumber,
-        service,
         total,
-        serviceValue,
         percentageToDoctor,
         assignedAmount,
       };
@@ -188,22 +179,22 @@ const getMedicalAppointment = () => {
               </select>
             </div>
             <div class="col-4">
-              <label for="" class="form-label">Paziente</label>
+              <label for="" class="form-label">Prestazione</label>
               <select
-                name="patient"
-                id="patient"
+                name="service"
+                id="service"
                 class="form-select"
-                v-model="form.patient"
+                v-model="form.service"
               >
-                <option value="">Seleziona paziente</option>
+                <option value="">Seleziona prestazione</option>
                 <option
-                  :value="patient._id"
-                  v-for="patient in patients"
-                  :key="patient._id"
+                  :value="service._id"
+                  v-for="service in services"
+                  :key="service._id"
                 >
-                  {{ patient.name }} {{ patient.surname }}
+                  {{ service.name }} 
                 </option>
-                <option value="add-patient">Aggiungi paziente</option>
+                <option value="add-service">Aggiungi prestazione</option>
               </select>
             </div>
           </div>
@@ -214,12 +205,12 @@ const getMedicalAppointment = () => {
               </div>
             </div>
           </div>
-          <div class="row mt-4" v-if="form.patient === 'add-patient'">
+          <div class="row mt-4" v-if="form.service === 'add-service'">
             <div class="col-12">
               <div class="card-form">
-                <FormAddPatient
+                <FormAddService
                   :refresh="false"
-                  @setPatientSelect="setPatient"
+                  @setServiceSelect="setService"
                 />
               </div>
             </div>
@@ -247,32 +238,10 @@ const getMedicalAppointment = () => {
                 v-model="form.invoiceNumber"
               />
             </div>
-            <div class="col-4">
-              <label for="" class="form-label">Prestazione</label>
-              <input
-                type="text"
-                name="service"
-                id="service"
-                class="form-control"
-                placeholder="Prestazione"
-                v-model="form.service"
-              />
-            </div>
+            
           </div>
           <div class="row mt-4">
-            <div class="col-3">
-              <label for="" class="form-label">Totale in fattura</label>
-              <input
-                type="number"
-                name="total"
-                id="total"
-                step="0.01"
-                min="0"
-                class="form-control"
-                placeholder="Totale in fattura"
-                v-model="form.total"
-              />
-            </div>
+            
             <div class="col-3">
               <label for="" class="form-label">Valore prestazione</label>
               <input

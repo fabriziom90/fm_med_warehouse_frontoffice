@@ -4,6 +4,7 @@ import api from "../../services/api";
 import { useConfigStore } from "../../stores/configStore";
 import { useRoute } from "vue-router";
 import TableAppointments from "../../components/TableAppointments.vue";
+import MaskedText from "../../components/MaskedText.vue";
 
 const token = localStorage.getItem("token");
 const configStore = useConfigStore();
@@ -43,11 +44,11 @@ onMounted(() => {
       </div>
       <div class="col-12 col-md-4">
         <div><strong>Nome:</strong></div>
-        <div>{{ doctor.name }}</div>
+        <div><MaskedText :text="doctor.name"/></div>
       </div>
       <div class="col-12 col-md-4">
         <div><strong>Cognome:</strong></div>
-        <div>{{ doctor.surname }}</div>
+        <div><MaskedText :text="doctor.surname"/></div>
       </div>
       <div class="col-12 col-md-4">
         <div><strong>Specializzazione:</strong></div>

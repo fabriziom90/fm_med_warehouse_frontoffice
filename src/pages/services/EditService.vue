@@ -1,36 +1,52 @@
 <script setup>
 import api from "../../services/api";
-import { ref } from "vue";
 import { useConfigStore } from "../../stores/configStore";
+import { ref, onMounted } from "vue";
 import { useToast } from "vue-toast-notification";
-import { router } from "../../router/index.js";
-
-const configStore = useConfigStore();
+import { router } from "../../router/index";
+import { useRoute } from "vue-router";
 
 const token = localStorage.getItem("token");
-
+const configStore = useConfigStore();
 const $toast = useToast();
+const route = useRoute();
+
+const serviceId = route.params.id;
 
 const form = ref({
   name: "",
+  surname: "",
 });
 
-const handleSubmit = async () => {
+onMounted(() => {
+  api
+    .get(`${configStore.apiBaseUrl}/services/${serviceId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((resp) => {
+      const { name } = resp.data.service;
+      form.value = {
+        name
+      };
+    });
+});
+
+const handleSubmit = () => {
   try {
-    await api
-      .post(`${configStore.apiBaseUrl}/drugs/store`, form.value, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+    api
+      .put(`${configStore.apiBaseUrl}/services/${serviceId}`, form.value, {
+        headers: { Authorization: `Bearer ${token}` },
       })
       .then((resp) => {
         if (resp.data.result) {
           $toast.success(resp.data.message, {
             position: "top-right",
-            duration: 1500,
+            duration: 3000,
           });
           setTimeout(() => {
-            router.push({ name: "indexDrugs" });
+            router.push({ name: "indexServices" });
           }, 1500);
         } else {
           $toast.error(resp.data.message, {
@@ -40,13 +56,10 @@ const handleSubmit = async () => {
         }
       });
   } catch (err) {
-    $toast.error(err.data.message, {
+    $toast.error(err.message, {
       position: "top-right",
       duration: 3000,
     });
-    // setTimeout(() => {
-    //   router.push({ name: "login" });
-    // }, 1500);
   }
 };
 </script>
@@ -55,27 +68,29 @@ const handleSubmit = async () => {
     <div class="row">
       <div class="col-12">
         <div class="d-flex justify-content-between align-items-center">
-          <h2 class="fs-1">Aggiungi nuovo medicinale</h2>
-          <router-link to="/admin/drugs" class="btn-main"
-            >Visualizza medicinali</router-link
+          <h2>Modifica prestazioni</h2>
+          <router-link to="/admin/services" class="btn-main"
+            >Visualizza prestazioni</router-link
           >
         </div>
       </div>
       <div class="col-12">
         <form @submit.prevent="handleSubmit">
           <div class="mb-4">
-            <label class="form-label">Nome medicinali</label>
+            <div class="form-label">Nome</div>
             <input
               type="text"
+              class="form-control"
+              placeholder="Nome"
               name="name"
               id="name"
-              placeholder="Inserisci il nome del medicinale"
-              class="form-control"
               v-model="form.name"
             />
           </div>
-          <div class="mb-2">
-            <button type="submit" class="btn-main">Salva</button>
+          
+
+          <div class="mb-4">
+            <button class="btn-main" type="submit">Salva</button>
           </div>
         </form>
       </div>

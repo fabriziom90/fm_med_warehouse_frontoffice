@@ -1,19 +1,19 @@
 <script setup>
-import FormAddDoctor from "../../components/FormAddDoctor.vue";
+import FormAddService from "../../components/FormAddService.vue";
 </script>
 <template lang="">
   <div class="container mt-4">
     <div class="row">
       <div class="col-12">
         <div class="d-flex justify-content-between align-items-center">
-          <h2 class="fs-1">Aggiungi nuovo medicinale</h2>
-          <router-link to="/admin/doctors" class="btn-main"
-            >Visualizza dottori</router-link
+          <h2>Aggiungi nuova prestazioni</h2>
+          <router-link class="btn-main" to="/admin/services"
+            >Visualizza prestazioni</router-link
           >
         </div>
       </div>
       <div class="col-12">
-        <FormAddDoctor :refresh="true" />
+        <FormAddService :refresh="true" />
       </div>
     </div>
   </div>
