@@ -4,6 +4,7 @@ import { ref, onMounted, inject, defineEmits, computed } from "vue";
 import { useToast } from "vue-toast-notification";
 import { useRoute } from "vue-router";
 import { useConfigStore } from "../stores/configStore.js";
+import ExportToPdfButton from "./ExportToPdfButton.vue";
 
 import Modal from "./Modal.vue";
 import Multiselect from "@vueform/multiselect";
@@ -43,6 +44,16 @@ const $toast = useToast();
 
 // use pinia store
 const configStore = useConfigStore();
+
+const pdfColumns = ["Nome", "Quantità", "Scadenza"];
+
+const pdfRows = computed(() =>
+  filteredProducts.value.map(ip => [
+    ip.product.name,
+    ip.quantity,
+    formatDate(ip.expirationDate)
+  ])
+);
 
 onMounted(() => {
   form.value.roomId = route.params.id;
@@ -293,13 +304,23 @@ const checkExpirationDate = (day) => {
           </div>
         </form>
       </div>
-      <div id="filter">
-        <input
-          type="text"
-          class="form-control"
-          placeholder="Filtra..."
-          v-model="search"
-        />
+      <div class="row mt-4">
+        <div id="filter" class="col-8">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Filtra..."
+            v-model="search"
+          />
+        </div>
+        <div class="col-4">
+          <ExportToPdfButton
+            title="Inventario prodotti"
+            :columns="pdfColumns"
+            :rows="pdfRows"
+            filename="inventario.pdf"
+          />
+        </div>
       </div>
       <table
         class="table table-striped mt-4"
@@ -404,6 +425,6 @@ const checkExpirationDate = (day) => {
 }
 
 #filter {
-  margin: 20px 0px;
+  margin: 5px 0px;
 }
 </style>
