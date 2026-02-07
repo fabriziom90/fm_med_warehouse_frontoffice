@@ -36,6 +36,16 @@ const form = ref({
   roomId: null,
 });
 
+const pdfColumns = ["Nome", "Quantità", "Scadenza"];
+
+const pdfRows = computed(() =>
+  filteredDrugs.value.map(ip => [
+    ip.drug.name,
+    ip.quantity,
+    formatDate(ip.expirationDate)
+  ])
+);
+
 onMounted(() => {
   form.value.roomId = route.params.id;
   api
@@ -301,10 +311,10 @@ const checkExpirationDate = (day) => {
         </div>
         <div class="col-4">
           <ExportToPdfButton
-            title="Inventario prodotti"
+            title="Inventario medicinali"
             :columns="pdfColumns"
             :rows="pdfRows"
-            filename="inventario.pdf"
+            filename="inventario_medicinali.pdf"
           />
         </div>
       </div>

@@ -318,7 +318,7 @@ const checkExpirationDate = (day) => {
             title="Inventario prodotti"
             :columns="pdfColumns"
             :rows="pdfRows"
-            filename="inventario.pdf"
+            filename="inventario_prodotti.pdf"
           />
         </div>
       </div>

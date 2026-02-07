@@ -46,6 +46,6 @@ const exportPdf = () => {
     @use '../styles/generals.scss' as *;
 
     .btn-main{
-        padding: 10px 20px;
+        padding: 10px 20px !important;
     }
 </style>
