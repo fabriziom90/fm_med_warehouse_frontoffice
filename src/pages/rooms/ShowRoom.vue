@@ -105,10 +105,12 @@ function closeModal() {
         </div>
         <InventoryProductTable
           :inventoryProducts="inventoryProducts"
+          :roomName="room.name"
           @refresh="refreshInventory"
         />
         <InventoryDrugTable
           :inventoryDrugs="inventoryDrugs"
+          :roomName="room.name"
           @refresh="refreshInventory"
         />
       </div>

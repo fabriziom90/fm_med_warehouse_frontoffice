@@ -11,6 +11,7 @@ import Multiselect from "@vueform/multiselect";
 
 const props = defineProps({
   inventoryProducts: Array,
+  roomName: String
 });
 
 const emit = defineEmits(["refresh"]);
@@ -316,6 +317,7 @@ const checkExpirationDate = (day) => {
         <div class="col-4">
           <ExportToPdfButton
             title="Inventario prodotti"
+            :name="roomName"
             :columns="pdfColumns"
             :rows="pdfRows"
             filename="inventario_prodotti.pdf"

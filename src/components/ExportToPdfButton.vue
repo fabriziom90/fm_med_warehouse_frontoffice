@@ -18,14 +18,15 @@ const props = defineProps({
   filename: {
     type: String,
     default: "export.pdf"
-  }
+  },
+  name: String,
 });
 
 const exportPdf = () => {
   const doc = new jsPDF();
 
   doc.setFontSize(16);
-  doc.text(props.title, 14, 20);
+  doc.text(`${props.title} - ${props.name}`, 14, 20);
 
   autoTable(doc, {
     startY: 30,
@@ -43,9 +44,9 @@ const exportPdf = () => {
   </button>
 </template>
 <style lang="scss" scoped>
-    @use '../styles/generals.scss' as *;
+@use '../styles/generals.scss' as *;
 
-    .btn-main{
-        padding: 10px 20px !important;
-    }
+.btn-main {
+  padding: 10px 20px !important;
+}
 </style>
