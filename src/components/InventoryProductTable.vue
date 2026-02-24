@@ -210,7 +210,7 @@ const closeModal = () => {
 const confirmDelete = async () => {
   await api
     .delete(
-      `${configStore.apiBaseUrl}/inventory_products/${actualProduct.value}/delete`,
+      `${configStore.apiBaseUrl}/inventory_products/delete/${actualProduct.value}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -420,6 +420,7 @@ const checkExpirationDate = (day) => {
 <style lang="scss" scoped>
 @use "../styles/_partials/_variables.scss" as *;
 @use "../styles/generals.scss";
+
 .border-right-main {
   border-right: 1px solid $mainColor;
 }
